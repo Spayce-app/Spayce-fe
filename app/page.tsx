@@ -1,84 +1,72 @@
+'use client'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { motion, AnimatePresence } from "framer-motion";
 import { Search, MapPin, Users, Wifi, Car, Shield, Calendar, Star, ChevronDown } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import Navbar from "@/components/Navbar"
 
 export default function HomePage() {
+  const rotatingWords = ["Anytime", "Anywhere", "Demand", "Instantly"];
+  const [index, setIndex] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % rotatingWords.length);
+    }, 2500); // change word every 2.5s
+    return () => clearInterval(interval);
+  }, []);
+
+  const router = useRouter()
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-8">
-              <Link href="/" className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                  <span className="text-primary-foreground font-bold text-lg">S</span>
-                </div>
-                <span className="text-xl font-bold text-foreground">spayce</span>
-              </Link>
-
-              <div className="hidden md:flex items-center space-x-1">
-                <Button variant="ghost" className="text-foreground hover:text-primary">
-                  Space Types
-                  <ChevronDown className="ml-1 h-4 w-4" />
-                </Button>
-                <Link href="/find-spaces">
-                  <Button variant="ghost" className="text-foreground hover:text-primary">
-                    Find Spaces
-                  </Button>
-                </Link>
-                <Button variant="ghost" className="text-foreground hover:text-primary">
-                  Pricing
-                </Button>
-                <Link href="/list-space">
-                  <Button variant="ghost" className="text-foreground hover:text-primary">
-                    List Your Space
-                  </Button>
-                </Link>
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" className="text-foreground hover:text-primary">
-                Log In
-              </Button>
-              <Link href="/dashboard">
-                <Button variant="ghost" className="text-foreground hover:text-primary">
-                  Dashboard
-                </Button>
-              </Link>
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">Sign Up</Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Hero Section */}
       <section className="relative min-h-[80vh] flex items-center justify-center">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('/placeholder.svg?key=j2ec9')`,
+            backgroundImage: `url('heroimg4.jpg')`,
           }}
         >
-          <div className="absolute inset-0 bg-black/40"></div>
+          <div className="absolute inset-0 bg-black/70"></div>
         </div>
 
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 text-balance">
-            Browse and Book Workspaces
-            <span className="block text-accent">Instantly</span>
-          </h1>
-
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <section className="text-center py-0">
+            <h1 className="text-4xl md:text-6xl w-full leading-16 font-bold text-white mb-6 text-balance">
+              Find Your Perfect Workspace{" "}
+              <span className="relative inline-block text-accent w-[8ch]">
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={rotatingWords[index]}
+                    initial={{ y: "100%", opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: "-100%", opacity: 0 }}
+                    transition={{ duration: 0.6, ease: "easeInOut" }}
+                    className="absolute -bottom-3  left-0"
+                  >
+                    {rotatingWords[index]}
+                  </motion.span>
+                </AnimatePresence>
+              </span>
+            </h1>
+            {/* <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
+              Flexible, modern, and ready when you are.
+            </p> */}
+          </section>
           <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto text-pretty">
             10,000+ workspace options including Desks, Conference Rooms, and Private Offices
           </p>
 
           {/* Search Bar */}
-          <div className="bg-white rounded-lg p-6 shadow-2xl max-w-3xl mx-auto">
+          <div className="bg-white rounded-lg p-6 shadow-2xl max-w-6xl mx-auto">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
                 <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
@@ -115,7 +103,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="group hover:shadow-lg transition-shadow cursor-pointer">
+            <Card className="group hover:shadow-md transition-shadow cursor-pointer">
               <CardContent className="p-6">
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                   <Users className="h-6 w-6 text-primary" />
@@ -130,14 +118,14 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="group hover:shadow-lg transition-shadow cursor-pointer">
+            <Card className="group hover:shadow-md transition-shadow cursor-pointer">
               <CardContent className="p-6">
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                   <Wifi className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Desks & Day Passes</h3>
                 <p className="text-muted-foreground mb-4">
-                  Access to work on a desk or table in a space's communal area(s).
+                  Access to work on a desk or table in a space&apos;s communal area(s).
                 </p>
                 <div className="flex flex-wrap gap-2">
                   <Badge variant="secondary">WiFi</Badge>
@@ -147,7 +135,7 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="group hover:shadow-lg transition-shadow cursor-pointer">
+            <Card className="group hover:shadow-md transition-shadow cursor-pointer">
               <CardContent className="p-6">
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                   <Shield className="h-6 w-6 text-primary" />
@@ -176,12 +164,16 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <Card key={i} className="group hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+            {[3, 4, 5, 6, 7, 8].map((i) => (
+              <Card key={i} onClick={() => router.push(`/spaces/${i}`)} className="group hover:shadow-md transition-shadow cursor-pointer overflow-hidden">
                 <div className="aspect-video relative overflow-hidden">
-                  <img
-                    src={`/modern-office.png?key=w7yw9&key=sj9dk&key=zc2nt&key=4shcy&height=200&width=300&query=modern office space ${i}`}
+                  <Image
+                    src={`/heroimg${i}.jpg`}
                     alt={`Workspace ${i}`}
+                    loading="lazy"
+                    fill
+                    blurDataURL={`/heroimg${i}.jpg`}
+                    placeholder="blur"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-4 right-4">
@@ -226,7 +218,7 @@ export default function HomePage() {
       </section>
 
       {/* Trusted By Section */}
-      <section className="py-16 bg-muted/30">
+      {/* <section className="py-16 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-2xl font-bold text-foreground mb-4">
@@ -242,7 +234,7 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Footer */}
       <footer className="bg-foreground text-background py-12">

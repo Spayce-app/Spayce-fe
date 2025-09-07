@@ -13,6 +13,7 @@ import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separators"
 import { Upload, Building, User, Camera, FileText, Shield, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react"
 import Link from "next/link"
+import Navbar from "@/components/Navbar"
 
 const STEPS = [
   { id: 1, title: "Owner Info", description: "Tell us about yourself" },
@@ -86,7 +87,7 @@ export default function ListSpacePage() {
 
   const progress = (currentStep / STEPS.length) * 100
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: string | number | boolean | File | null) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
@@ -131,10 +132,10 @@ export default function ListSpacePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation */}
+      <Navbar />
       <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          {/* <div className="flex justify-between items-center h-16">
             <Link href="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <span className="text-primary-foreground font-bold text-lg">S</span>
@@ -148,11 +149,11 @@ export default function ListSpacePage() {
               </Button>
               <Button variant="outline">Save Draft</Button>
             </div>
-          </div>
+          </div> */}
         </div>
       </nav>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">List Your Space</h1>
@@ -177,13 +178,12 @@ export default function ListSpacePage() {
           {STEPS.map((step) => (
             <div key={step.id} className="flex flex-col items-center">
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${
-                  step.id < currentStep
+                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${step.id < currentStep
                     ? "bg-primary text-primary-foreground"
                     : step.id === currentStep
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted text-muted-foreground"
-                }`}
+                  }`}
               >
                 {step.id < currentStep ? <CheckCircle className="h-5 w-5" /> : step.id}
               </div>
@@ -534,12 +534,13 @@ export default function ListSpacePage() {
                         onCheckedChange={(checked) => handleInputChange("agreeTerms", checked)}
                       />
                       <Label htmlFor="agreeTerms" className="text-sm leading-relaxed">
-                        I agree to Spayce's{" "}
+                        I agree to Spayce&apos;s
                         <Link href="/terms" className="text-primary hover:underline">
                           Terms of Service
-                        </Link>{" "}
+                        </Link>
                         including escrow payments, renter reviews, and dispute handling procedures.
                       </Label>
+
                     </div>
                   </div>
                 </div>

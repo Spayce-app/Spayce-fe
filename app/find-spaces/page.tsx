@@ -30,6 +30,7 @@ import {
   Volume2,
 } from "lucide-react"
 import Link from "next/link"
+import Navbar from "@/components/Navbar"
 
 const mockSpaces = [
   {
@@ -41,7 +42,7 @@ const mockSpaces = [
     price: 25,
     priceUnit: "per day",
     rating: 4.8,
-    image: "/modern-coworking-wooden.png",
+    image: "heroimg.jpg",
     amenities: ["Desks", "3 Meeting rooms"],
     features: ["WiFi", "Coffee", "Parking"],
   },
@@ -54,7 +55,7 @@ const mockSpaces = [
     price: 40,
     priceUnit: "per day",
     rating: 4.9,
-    image: "/modern-office.png",
+    image: "herimg2.jpg",
     amenities: ["Desks", "4 Meeting rooms", "1 Office room"],
     features: ["WiFi", "Coffee", "Parking", "Printing"],
   },
@@ -67,7 +68,7 @@ const mockSpaces = [
     price: 35,
     priceUnit: "per day",
     rating: 4.7,
-    image: "/creative-workspace-plants-light.png",
+    image: "heroimg3.jpg",
     amenities: ["Desks", "2 Meeting rooms"],
     features: ["WiFi", "Coffee", "24/7 Access"],
   },
@@ -80,7 +81,7 @@ const mockSpaces = [
     price: 30,
     priceUnit: "per day",
     rating: 4.6,
-    image: "/tech-startup-office-space.jpg",
+    image: "heroimg5.jpg",
     amenities: ["Desks", "1 Meeting room", "Phone booths"],
     features: ["WiFi", "Coffee", "Parking", "Printing"],
   },
@@ -93,7 +94,7 @@ const mockSpaces = [
     price: 55,
     priceUnit: "per day",
     rating: 4.9,
-    image: "/executive-office-suite-with-city-view.jpg",
+    image: "heroimg6.jpg",
     amenities: ["Private Offices", "3 Meeting rooms"],
     features: ["WiFi", "Coffee", "Parking", "Reception"],
   },
@@ -106,7 +107,7 @@ const mockSpaces = [
     price: 28,
     priceUnit: "per day",
     rating: 4.5,
-    image: "/startup-incubator-workspace.jpg",
+    image: "heroimg7.jpg",
     amenities: ["Desks", "2 Meeting rooms", "Event space"],
     features: ["WiFi", "Coffee", "24/7 Access", "Kitchen"],
   },
@@ -121,33 +122,7 @@ export default function FindSpacesPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-8">
-              <Link href="/" className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                  <span className="text-primary-foreground font-bold text-lg">S</span>
-                </div>
-                <span className="text-xl font-bold text-foreground">spayce</span>
-              </Link>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" className="text-foreground hover:text-primary">
-                Benefits & Pricing
-              </Button>
-              <Button variant="ghost" className="text-foreground hover:text-primary">
-                Spaces
-              </Button>
-              <Button variant="ghost" className="text-foreground hover:text-primary">
-                Log In
-              </Button>
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">Sign Up</Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar/>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Search Header */}

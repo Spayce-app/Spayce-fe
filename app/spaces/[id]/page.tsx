@@ -24,6 +24,7 @@ import {
   ChevronDown,
 } from "lucide-react"
 import Link from "next/link"
+import Navbar from "@/components/Navbar"
 
 // Mock data for the space
 const spaceData = {
@@ -114,33 +115,7 @@ export default function SpaceDetailPage({ params }: { params: { id: string } }) 
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-8">
-              <Link href="/" className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                  <span className="text-primary-foreground font-bold text-lg">S</span>
-                </div>
-                <span className="text-xl font-bold text-foreground">spayce</span>
-              </Link>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" className="text-foreground hover:text-primary">
-                Benefits & Pricing
-              </Button>
-              <Button variant="ghost" className="text-foreground hover:text-primary">
-                Spaces
-              </Button>
-              <Button variant="ghost" className="text-foreground hover:text-primary">
-                Log In
-              </Button>
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">Sign Up</Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar/>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Breadcrumb */}
@@ -375,7 +350,7 @@ export default function SpaceDetailPage({ params }: { params: { id: string } }) 
                     Reserve Desk - ₦{spaceData.price * 1000} per day
                   </Button>
 
-                  <div className="text-center text-sm text-muted-foreground">You won't be charged yet</div>
+                  <div className="text-center text-sm text-muted-foreground">You will not be charged yet</div>
                 </CardContent>
               </Card>
 

@@ -82,11 +82,10 @@ export default function Dashboard() {
                 <li key={item.id}>
                   <button
                     onClick={() => setActiveTab(item.id)}
-                    className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
-                      activeTab === item.id
+                    className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${activeTab === item.id
                         ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                         : "text-gray-700 hover:bg-gray-50"
-                    }`}
+                      }`}
                   >
                     <Icon className="h-5 w-5" />
                     <span className="font-medium">{item.label}</span>
@@ -383,7 +382,7 @@ function BookingsContent() {
               </div>
               <div className="text-right">
                 <p className="font-semibold text-lg">$45.00</p>
-                <Badge  className="bg-green-100 text-green-800">
+                <Badge className="bg-green-100 text-green-800">
                   Confirmed
                 </Badge>
               </div>
@@ -453,9 +452,10 @@ function ReviewsContent() {
                 </div>
                 <p className="text-sm text-gray-600 mb-2">Downtown Creative Hub</p>
                 <p className="text-gray-700">
-                  "Amazing workspace with great natural light and modern amenities. Perfect for my team's brainstorming
-                  session. Will definitely book again!"
+                  Amazing workspace with great natural light and modern amenities. Perfect for my team&apos;s brainstorming
+                  session. Will definitely book again!
                 </p>
+
                 <p className="text-sm text-gray-500 mt-2">December 13, 2024</p>
               </div>
             </div>
