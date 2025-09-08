@@ -86,7 +86,7 @@ export default function Navbar() {
           <>
             {/* Overlay */}
             <motion.div
-              className="fixed inset-0 bg-black/50 h-[100vh]  backdrop-blur-sm z-40"
+              className="fixed inset-0 bg-black/50 h-[100dvh]  backdrop-blur-sm z-40"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -110,7 +110,7 @@ export default function Navbar() {
                 </div>
 
                 <motion.ul
-                  className="flex flex-col space-y-4 p-4"
+                  className="flex flex-col space-y-10 p-4"
                   initial="hidden"
                   animate="show"
                   exit="hidden"
@@ -130,7 +130,7 @@ export default function Navbar() {
                       <Link
                         href={href}
                         onClick={() => setIsOpen(false)}
-                        className={`block text-lg ${pathname === href
+                        className={`block text ${pathname === href
                           ? "text-primary font-semibold"
                           : "text-foreground"
                           } hover:text-white`}
@@ -165,10 +165,13 @@ export default function Navbar() {
                   hidden: { opacity: 0, x: -20 },
                   show: { opacity: 1, x: 0 },
                 }}
-                className="flex flex-col items-center justify-center mb-4"
+                className="flex flex-col items-center justify-center mb-4 gap-4"
               >
                 <Button className="w-[90%] mx-auto bg-primary hover:bg-primary/90 text-primary-foreground">
                   Sign Up
+                </Button>
+                   <Button className="w-[90%] mx-auto bg-primary hover:bg-primary/90 text-primary-foreground">
+                  Sign In
                 </Button>
               </motion.div>
             </motion.div>

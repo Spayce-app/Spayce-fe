@@ -12,7 +12,7 @@ import { useEffect, useState } from "react"
 import Navbar from "@/components/Navbar"
 
 export default function HomePage() {
-  const rotatingWords = ["Anytime", "Anywhere", "Demand", "Instantly"];
+  const rotatingWords = ["Anytime", "Anywhere", "Instantly"];
   const [index, setIndex] = useState(0);
   useEffect(() => {
     const interval = setInterval(() => {
@@ -40,7 +40,7 @@ export default function HomePage() {
 
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <section className="text-center py-0">
-            <h1 className="text-4xl md:text-6xl w-full leading-16 font-bold text-white mb-6 text-balance">
+            <h1 className="text-3xl md:text-6xl w-full md:leading-16 font-bold text-white mb-6 text-balance">
               Find Your Perfect Workspace{" "}
               <span className="relative inline-block text-accent w-[8ch]">
                 <AnimatePresence mode="wait">
@@ -50,7 +50,7 @@ export default function HomePage() {
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: "-100%", opacity: 0 }}
                     transition={{ duration: 0.6, ease: "easeInOut" }}
-                    className="absolute -bottom-3  left-0"
+                    className="absolute -bottom-2 md:-bottom-3 left-0 md:left-0"
                   >
                     {rotatingWords[index]}
                   </motion.span>
@@ -61,7 +61,7 @@ export default function HomePage() {
               Flexible, modern, and ready when you are.
             </p> */}
           </section>
-          <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto text-pretty">
+          <p className="md:text-xl text text-white/90 mb-8 max-w-2xl mx-auto text-pretty">
             10,000+ workspace options including Desks, Conference Rooms, and Private Offices
           </p>
 
