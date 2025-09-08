@@ -72,13 +72,13 @@ export default function HomePage() {
                 <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
                 <Input
                   placeholder="Search by city or workspace name..."
-                  className="pl-10 h-12 text-lg border-border focus:ring-primary"
+                  className="pl-10 h-12 text-sm border-border focus:ring-primary"
                 />
               </div>
 
               <div className="flex-1 relative">
                 <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                <Input placeholder="Select date..." className="pl-10 h-12 text-lg border-border focus:ring-primary" />
+                <Input placeholder="Select date..." className="pl-10 h-12 text-sm border-border focus:ring-primary" />
               </div>
 
               <Link href="/find-spaces">

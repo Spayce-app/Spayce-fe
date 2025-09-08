@@ -6,6 +6,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, Menu, X } from "lucide-react";
+import Image from "next/image";
 
 const navLinks = [
   { label: "Space Types", href: "/space-types", dropdown: true },
@@ -24,11 +25,12 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-lg">S</span>
+          <Link href="/" className="flex relative items-center space-x-2">
+            <div className="w-24 h-24  relative bg-transparent rounded-lg flex items-center justify-center">
+              {/* <span className="text-primary-foreground font-bold text-lg">S</span> */}
+              <Image src="/sapaycelogo.png" alt="Spayce Logo" fill/>
             </div>
-            <span className="text-xl font-bold text-foreground">spayce</span>
+            <span className="text-3xl absolute top-7 -right-18 font-bold text-primary">spayce</span>
           </Link>
 
           {/* Desktop Nav */}

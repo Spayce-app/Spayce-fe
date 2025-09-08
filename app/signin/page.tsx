@@ -1,68 +1,99 @@
-'use client'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { AnimatePresence } from 'framer-motion'
-import Image from 'next/image'
-import React, { useState } from 'react'
-import toast, { Toaster } from 'react-hot-toast'
-export default function Page() {
-    const [formData, setFormdata] = useState({
-        email: '',
-        password: '',
-    })
+"use client";
 
-    const [createAccountModal, setCraeteAccountModal] = useState(false)
+import { useState } from "react";
+import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import { Eye, EyeClosed } from "lucide-react";
 
+export default function SignInPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [show, setShow] = useState(false);
 
-    const handleToggleCreateAccountModal = () => {
-        setCraeteAccountModal(!createAccountModal)
-        setFormdata({ email: '', password: '' })
-    }
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target
-        setFormdata({ ...formData, [name]: value })
-    }
-
-    return (
-        <div className='h-[100vh] w-screen flex-col gap-4 flex justify-center items-center'>
-            <div className='cursor-pointer  flex items-center top-0 w-full  fixed z-50 md:bg-transaparent bg-[#f4f4f0] md:h-[10%] h-[15%]  justify-center flex' onClick={() => setCraeteAccountModal(false)}>
-                <Image src={'/images/gote-logo-removebg.png'} alt='Logo' sizes='' objectFit='cover' width={180} height={100} priority={true} className='fixed   z-50 md:left-10 left-20  top-5  md:top-10' />
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-white text-gray-900">
+      <div className="w-full max-w-3xl p-8">
+        {/* Logo */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex justify-center absolute top-10 left-10 mb-8"
+        >
+          <Link href="/" className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+              <span className="text-primary-foreground font-bold text-xl">S</span>
             </div>
-            <div><Toaster /></div>
-            <div className='xl:w-[39%] mx-auto flex flex-col gap-2 items-center text-center xl:items-start'>
-                <div className='md:text-[2.5rem] text-[2rem]'>
-                    <strong> Welcome</strong> <span className='font-light'>Back</span>
-                </div>
-                <div>
-                    <div>Please enter your login details to access your account.</div>
-                </div>
-            </div>
-            <div className='w-full flex justify-center  items-center'>
-                <form className='w-full justify-center gap-10 flex flex-col items-center' >
-                    <div className='w-[60%] justify-center flex flex-col gap-4 items-center'>
-                        <Input type='email' className='border-2' width='xl:w-[40%] w-[80%]' name='email' placeholder='E.g Bendee@gmail.com' value={formData.email} onChange={handleInputChange} />
-                        <Input type='password' width='xl:w-[40%] w-[80%]' name='password' placeholder='E.g Steword12#$%' value={formData.password} onChange={handleInputChange} />
-                    </div>
-                    <div className='w-full  items-center  justify-center  flex text-white'>
-                        <Button>Submit</Button>
-                    </div>
-                    <div>New account? <span className='underline cursor-pointer leading-0 tracking-0' onClick={handleToggleCreateAccountModal}>Sign Up</span> </div>
-                </form>
-            </div>
-            {/* <AnimatePresence>
-                {
-                    createAccountModal &&
-                    <motion.div
-                        initial={{ opacity: 0, y: 300 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ type: 'spring', damping: 10, stiffness: 50 }}
-                        exit={{ opacity: 0, y: 300 }}
-                        className='flex flex-col gap-2 overflow-auto xl:pt-32  md:pt-[13rem] pt-[8rem] Account_slide  h-full inset-0 absolute md:fixed w-full  bg-[#f4f4f0] justify-center items-center text-center mx-auto' >
-                        <Signup setCraeteAccountModal={setCraeteAccountModal} />
-                    </motion.div>
-                }
-            </AnimatePresence> */}
-        </div>
-    )
+            <span className="text-2xl font-bold text-foreground">spayce</span>
+          </Link>
+        </motion.div>
+
+        {/* Heading */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="text-center mb-10"
+        >
+          <h1 className="text-2xl font-bold">Welcome Back</h1>
+          <p className="text-gray-600 text-sm mt-1">
+            Please enter your login details to access your account.
+          </p>
+        </motion.div>
+
+        {/* Form */}
+        <form className="space-y-8">
+          <div>
+            <Input
+              type="email"
+              placeholder="E.g bendee@gmail.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              noRing
+              className="rounded-md border-0 h-13 border-b border-gray-300"
+            />
+          </div>
+
+          {/* Password with toggle */}
+          <div className="relative">
+            <Input
+              type={show ? "text" : "password"}
+              placeholder="E.g Steward12#$%"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              noRing
+              className="rounded-md border-0 border-b h-13 border-gray-300 pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShow(!show)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+            >
+              {show ? <EyeClosed size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
+
+          <Button
+            type="submit"
+            size={"lg"}
+            className="w-full bg-primary text-white hover:bg-green-700 rounded-lg mt-4 transition"
+          >
+            Sign In
+          </Button>
+        </form>
+
+        {/* Bottom Link */}
+        <p className="text-center text-sm mt-6 text-gray-600">
+          New account?{" "}
+          <Link
+            href="/signup"
+            className="text-primary hover:underline font-medium"
+          >
+            Sign Up
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
 }
