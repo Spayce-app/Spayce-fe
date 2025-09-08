@@ -82,7 +82,7 @@ export default function HomePage() {
               </div>
 
               <Link href="/find-spaces">
-                <Button className="h-12 px-8 bg-primary hover:bg-primary/90 text-primary-foreground text-lg">
+                <Button  className="h-12 px-24 md:px-8 bg-primary hover:bg-primary/90 text-primary-foreground md:text-md">
                   <Search className="mr-2 h-5 w-5" />
                   Find Spaces
                 </Button>
