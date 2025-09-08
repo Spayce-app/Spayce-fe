@@ -67,23 +67,23 @@ export default function HomePage() {
 
           {/* Search Bar */}
           <div className="bg-white rounded-lg p-6 shadow-2xl max-w-6xl mx-auto">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1 relative">
-                <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+            <div className="flex flex-col  md:flex-row gap-4">
+              <div className="flex-1  relative">
+                <MapPin className="absolute  left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
                 <Input
-                  placeholder="Search by city or workspace name..."
-                  className="pl-10 h-12 text-sm border-border focus:ring-primary"
+                  placeholder="Search by  city or workspace name..."
+                  className="pl-10 h-12  text-sm border-border focus:ring-primary"
                 />
               </div>
 
-              <div className="flex-1 relative">
+              <div className="flex-1  relative">
                 <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
                 <Input placeholder="Select date..." className="pl-10 h-12 text-sm border-border focus:ring-primary" />
               </div>
 
-              <Link href="/find-spaces">
-                <Button  className="h-12 px-24 md:px-8 bg-primary hover:bg-primary/90 text-primary-foreground md:text-md">
-                  <Search className="mr-2 h-5 w-5" />
+              <Link href="/find-spaces ">
+                <Button  className="h-12 px-20 md:px-8 bg-primary hover:bg-primary/90 text-primary-foreground md:text-md">
+                  <Search className="mr-2 h-5  w-5" />
                   Find Spaces
                 </Button>
               </Link>
