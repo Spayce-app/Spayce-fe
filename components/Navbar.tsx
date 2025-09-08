@@ -26,11 +26,11 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex relative items-center space-x-2">
-            <div className="w-24 h-24  relative bg-transparent rounded-lg flex items-center justify-center">
+            <div className="w-22 h-22  relative bg-transparent rounded-lg flex items-center justify-center">
               {/* <span className="text-primary-foreground font-bold text-lg">S</span> */}
-              <Image src="/sapaycelogo.png" alt="Spayce Logo" fill/>
+              <Image src="/sapaycelogo.png" alt="Spayce Logo" fill priority={true} blurDataURL="data:image/svg+xml;base64,..." />
             </div>
-            <span className="text-3xl absolute top-7 -right-18 font-bold text-primary">spayce</span>
+            <span className="text-2xl absolute top-7 -right-14 font-bold text-primary">spayce</span>
           </Link>
 
           {/* Desktop Nav */}
