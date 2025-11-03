@@ -27,6 +27,7 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar"
+import Footer from "@/components/Footer"
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("overview")
@@ -465,6 +466,7 @@ function ReviewsContent() {
     </div>
   )
 }
+
 
 function SettingsContent() {
   return (

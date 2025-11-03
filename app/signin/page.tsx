@@ -7,27 +7,50 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Eye, EyeClosed } from "lucide-react";
 import Image from "next/image";
+import { useMutation } from "@tanstack/react-query";
+import { loginUser } from "@/lib/api";
 
 export default function Page() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
+  const loginMutation = useMutation({
+    mutationFn: loginUser,
+    onSuccess: (data) => {
+      localStorage.setItem("token", data.token);
+      window.location.href = "/dashboard";
+    },
+    onError: (error: any) => {
+      alert(error.message);
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    loginMutation.mutate({email,password});
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white text-gray-900">
       <div className="w-full max-w-3xl p-8">
-        {/* Logo */}
-         <motion.div
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex justify-center absolute top-4 left-10 mb-8"
         >
           <Link href="/" className="flex relative items-center space-x-2">
-            <div className="w-22 h-22  relative bg-transparent rounded-lg flex items-center justify-center">
-              {/* <span className="text-primary-foreground font-bold text-lg">S</span> */}
-              <Image src="/sapaycelogo.png" alt="Spayce Logo" fill priority={true} blurDataURL="data:image/svg+xml;base64,..." />
+            <div className="w-22 h-22 relative bg-transparent rounded-lg flex items-center justify-center">
+              <Image
+                src="/sapaycelogo.png"
+                alt="Spayce Logo"
+                fill
+                priority={true}
+                blurDataURL="data:image/svg+xml;base64,..."
+              />
             </div>
-            <span className="text-2xl absolute top-7 -right-14 font-bold text-primary">spayce</span>
+            <span className="text-2xl absolute top-7 -right-14 font-bold text-primary">
+              spayce
+            </span>
           </Link>
         </motion.div>
 
@@ -38,14 +61,16 @@ export default function Page() {
           transition={{ delay: 0.1 }}
           className="text-left mb-5"
         >
-          <h1 className="text-3xl font-bold text-foreground"><span className="text-primary">Welcome</span> Back</h1>
+          <h1 className="text-3xl font-bold text-foreground">
+            <span className="text-primary">Welcome</span> Back
+          </h1>
           <p className="text-gray-600 text-sm mt-1">
             Please enter your login details to access your account.
           </p>
         </motion.div>
 
         {/* Form */}
-        <form className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-8">
           <div>
             <Input
               type="email"
@@ -53,6 +78,7 @@ export default function Page() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               noRing
+              required
               className="rounded-md border-0 h-13 border-b border-black"
             />
           </div>
@@ -65,6 +91,7 @@ export default function Page() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               noRing
+              required
               className="rounded-md border-0 border-b h-13 border-black pr-10"
             />
             <button
@@ -79,9 +106,10 @@ export default function Page() {
           <Button
             type="submit"
             size={"lg"}
+            disabled={loginMutation.isPending}
             className="w-full bg-primary text-white hover:bg-green-700 rounded-lg mt-4 transition"
           >
-            Sign In
+            {loginMutation.isPending ? "Signing in..." : "Sign In"}
           </Button>
         </form>
 

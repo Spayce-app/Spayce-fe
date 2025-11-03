@@ -14,6 +14,7 @@ import { Separator } from "@/components/ui/separators"
 import { Upload, Building, User, Camera, FileText, Shield, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react"
 import Link from "next/link"
 import Navbar from "@/components/Navbar"
+import Footer from "@/components/Footer"
 
 const STEPS = [
   { id: 1, title: "Owner Info", description: "Tell us about yourself" },
@@ -179,10 +180,10 @@ export default function ListSpacePage() {
             <div key={step.id} className="flex flex-col items-center">
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${step.id < currentStep
+                  ? "bg-primary text-primary-foreground"
+                  : step.id === currentStep
                     ? "bg-primary text-primary-foreground"
-                    : step.id === currentStep
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground"
+                    : "bg-muted text-muted-foreground"
                   }`}
               >
                 {step.id < currentStep ? <CheckCircle className="h-5 w-5" /> : step.id}
@@ -549,7 +550,6 @@ export default function ListSpacePage() {
           </CardContent>
         </Card>
 
-        {/* Navigation Buttons */}
         <div className="flex justify-between mt-8">
           <Button
             variant="outline"
@@ -578,6 +578,7 @@ export default function ListSpacePage() {
           )}
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

@@ -9,7 +9,6 @@ import { ChevronDown, Menu, X } from "lucide-react";
 import Image from "next/image";
 
 const navLinks = [
-  { label: "Space Types", href: "/space-types", dropdown: true },
   { label: "Find Spaces", href: "/find-spaces" },
   { label: "Pricing", href: "/pricing" },
   { label: "List Your Space", href: "/list-space" },
@@ -26,16 +25,16 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex relative items-center space-x-2">
-            <div className="w-22 h-22  relative bg-transparent rounded-lg flex items-center justify-center">
+            <div className="w-18 h-18  relative bg-transparent rounded-lg flex items-center justify-center">
               {/* <span className="text-primary-foreground font-bold text-lg">S</span> */}
               <Image src="/sapaycelogo.png" alt="Spayce Logo" fill priority={true} blurDataURL="data:image/svg+xml;base64,..." />
             </div>
-            <span className="text-2xl absolute top-7 -right-14 font-bold text-primary">spayce</span>
+            <span className="text-2xl absolute top-5 -right-16 font-bold text-primary">spayce</span>
           </Link>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center space-x-1">
-            {navLinks.map(({ label, href, dropdown }) => (
+            {navLinks.map(({ label, href}) => (
               <Link key={label} href={href}>
                 <Button
                   variant="ghost"
@@ -43,7 +42,7 @@ export default function Navbar() {
                     } hover:text-white`}
                 >
                   {label}
-                  {dropdown && <ChevronDown className="ml-1 h-4 w-4" />}
+                  
                 </Button>
               </Link>
             ))}

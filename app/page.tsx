@@ -10,6 +10,7 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import Navbar from "@/components/Navbar"
+import Footer from "@/components/Footer"
 
 export default function HomePage() {
   const rotatingWords = ["Anytime", "Anywhere", "Instantly"];
@@ -29,14 +30,17 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="relative min-h-[80vh] flex items-center justify-center">
-        <div
+        <motion.div
+          animate={{ scale: 1 }}
+          initial={{ scale: 1.1 }}
+          transition={{ duration: 3, ease: 'easeOut' }}
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: `url('heroimg4.jpg')`,
           }}
         >
           <div className="absolute inset-0 bg-black/70"></div>
-        </div>
+        </motion.div>
 
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <section className="text-center py-0">
@@ -64,8 +68,6 @@ export default function HomePage() {
           <p className="md:text-xl text text-white/90 mb-8 max-w-2xl mx-auto text-pretty">
             10,000+ workspace options including Desks, Conference Rooms, and Private Offices
           </p>
-
-          {/* Search Bar */}
           <div className="bg-white rounded-lg p-6 shadow-2xl max-w-6xl mx-auto">
             <div className="flex flex-col  md:flex-row gap-4">
               <div className="flex-1  relative">
@@ -82,7 +84,7 @@ export default function HomePage() {
               </div>
 
               <Link href="/find-spaces ">
-                <Button  className="h-12 px-20 md:px-8 bg-primary hover:bg-primary/90 text-primary-foreground md:text-md">
+                <Button className="h-12 px-20 md:px-8 bg-primary hover:bg-primary/90 text-primary-foreground md:text-md">
                   <Search className="mr-2 h-5  w-5" />
                   Find Spaces
                 </Button>
@@ -92,7 +94,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Space Types Section */}
       <section className="py-16 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -155,7 +156,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured Spaces */}
+
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -216,109 +217,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* Trusted By Section */}
-      {/* <section className="py-16 bg-muted/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl font-bold text-foreground mb-4">
-              ENABLING THE BEST BRANDS, SMALL BUSINESSES AND INDIVIDUALS
-            </h2>
-          </div>
-
-          <div className="flex flex-wrap justify-center items-center gap-8 opacity-60">
-            {["Microsoft", "Netflix", "Mailchimp", "Facebook", "Reddit"].map((brand) => (
-              <div key={brand} className="text-2xl font-bold text-muted-foreground">
-                {brand}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section> */}
-
-      {/* Footer */}
-      <footer className="bg-foreground text-background py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                  <span className="text-primary-foreground font-bold text-lg">S</span>
-                </div>
-                <span className="text-xl font-bold">spayce</span>
-              </div>
-              <p className="text-background/80">Find and book the perfect workspace for your needs.</p>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-4">For Renters</h4>
-              <ul className="space-y-2 text-background/80">
-                <li>
-                  <Link href="/find-spaces" className="hover:text-primary transition-colors">
-                    Find Spaces
-                  </Link>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    How It Works
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Pricing
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-4">For Hosts</h4>
-              <ul className="space-y-2 text-background/80">
-                <li>
-                  <Link href="/list-space" className="hover:text-primary transition-colors">
-                    List Your Space
-                  </Link>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Host Resources
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Success Stories
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-4">Support</h4>
-              <ul className="space-y-2 text-background/80">
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Help Center
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Contact Us
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Terms of Service
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-background/20 mt-8 pt-8 text-center text-background/60">
-            <p>&copy; 2024 Spayce. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }
