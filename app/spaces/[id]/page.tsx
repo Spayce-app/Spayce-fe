@@ -25,8 +25,6 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import Navbar from "@/components/Navbar"
-
-// Mock data for the space
 const spaceData = {
   id: 1,
   name: "CENTRL Office - Downtown Sacramento",
@@ -36,10 +34,10 @@ const spaceData = {
   price: 40,
   priceUnit: "per day",
   images: [
-    "/modern-office.png",
-    "/modern-coworking-wooden.png",
-    "/creative-workspace-plants-light.png",
-    "/about-company.png",
+    "/spaceimg1.jpg",
+    "/spaceimg2.jpg",
+    "/spaceimg3.jpg",
+    "/spaceimg4.jpg",
   ],
   description:
     "A modern, professional workspace in the heart of downtown Sacramento. Perfect for individuals and teams looking for a productive environment with all the amenities you need.",
@@ -114,11 +112,9 @@ export default function SpaceDetailPage({ params }: { params: { id: string } }) 
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation */}
       <Navbar/>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Breadcrumb */}
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex items-center space-x-2 text-sm text-muted-foreground mb-6">
           <Link href="/find-spaces" className="hover:text-primary flex items-center">
             <ChevronLeft className="h-4 w-4 mr-1" />
@@ -127,9 +123,7 @@ export default function SpaceDetailPage({ params }: { params: { id: string } }) 
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Image Gallery */}
             <div className="relative">
               <div className="aspect-video relative overflow-hidden rounded-lg">
                 <img
@@ -137,8 +131,6 @@ export default function SpaceDetailPage({ params }: { params: { id: string } }) 
                   alt={`${spaceData.name} - Image ${currentImageIndex + 1}`}
                   className="w-full h-full object-cover"
                 />
-
-                {/* Image Navigation */}
                 <button
                   onClick={prevImage}
                   className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
@@ -151,8 +143,6 @@ export default function SpaceDetailPage({ params }: { params: { id: string } }) 
                 >
                   <ChevronRight className="h-5 w-5" />
                 </button>
-
-                {/* Image Counter */}
                 <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
                   <Camera className="inline h-4 w-4 mr-1" />
                   {currentImageIndex + 1} / {spaceData.images.length}
@@ -169,8 +159,6 @@ export default function SpaceDetailPage({ params }: { params: { id: string } }) 
                   </Button>
                 </div>
               </div>
-
-              {/* Thumbnail Strip */}
               <div className="flex space-x-2 mt-4 overflow-x-auto">
                 {spaceData.images.map((image, index) => (
                   <button

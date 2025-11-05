@@ -31,6 +31,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import Navbar from "@/components/Navbar"
+import Footer from "@/components/Footer"
 
 const mockSpaces = [
   {
@@ -114,7 +115,7 @@ const mockSpaces = [
 ]
 
 export default function FindSpacesPage() {
-  const [searchQuery, setSearchQuery] = useState("Fremont, California")
+  const [searchQuery, setSearchQuery] = useState("Lekki, Lagos")
   const [viewMode, setViewMode] = useState<"grid" | "list" | "map">("grid")
   const [showFilters, setShowFilters] = useState(false)
   const [priceRange, setPriceRange] = useState([0, 100])
@@ -124,7 +125,7 @@ export default function FindSpacesPage() {
       {/* Navigation */}
       <Navbar/>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Search Header */}
         <div className="mb-6">
           <div className="flex flex-col md:flex-row gap-4 items-center">
@@ -333,7 +334,7 @@ export default function FindSpacesPage() {
                         </div>
                       </div>
                       <CardContent className="p-4">
-                        <h3 className="font-semibold text-lg mb-1">{space.name}</h3>
+                        <h3 className="font-semibold text-md mb-1">{space.name}</h3>
                         <p className="text-muted-foreground text-sm mb-2">
                           {space.location} • {space.distance} • Opens at {space.openTime}
                         </p>
@@ -370,6 +371,7 @@ export default function FindSpacesPage() {
                     </Card>
                   </Link>
                 ))}
+            
               </div>
             )}
 
@@ -450,8 +452,6 @@ export default function FindSpacesPage() {
               </div>
             )}
           </div>
-
-          {/* Map Sidebar (Desktop) */}
           <div className="hidden lg:block">
             <div className="sticky top-24">
               <Card className="overflow-hidden">
@@ -464,8 +464,10 @@ export default function FindSpacesPage() {
               </Card>
             </div>
           </div>
+          
         </div>
       </div>
+          <Footer/>
     </div>
   )
 }

@@ -95,7 +95,7 @@ export default function HomePage() {
       </section>
 
       <section className="py-16 bg-muted/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-foreground mb-4">Choose Your Workspace Type</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -158,7 +158,7 @@ export default function HomePage() {
 
 
       <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-foreground mb-4">Popular Workspaces</h2>
             <p className="text-lg text-muted-foreground">Discover highly-rated spaces in your area</p>

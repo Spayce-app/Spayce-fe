@@ -17,8 +17,9 @@ export default function Page() {
   const loginMutation = useMutation({
     mutationFn: loginUser,
     onSuccess: (data) => {
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("token", data.data.token);
       window.location.href = "/dashboard";
+      //  console.log("authorisation token",data.data.token)
     },
     onError: (error: any) => {
       alert(error.message);
@@ -53,8 +54,6 @@ export default function Page() {
             </span>
           </Link>
         </motion.div>
-
-        {/* Heading */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -68,8 +67,6 @@ export default function Page() {
             Please enter your login details to access your account.
           </p>
         </motion.div>
-
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-8">
           <div>
             <Input
@@ -81,9 +78,7 @@ export default function Page() {
               required
               className="rounded-md border-0 h-13 border-b border-black"
             />
-          </div>
-
-          {/* Password with toggle */}
+            </div>
           <div className="relative">
             <Input
               type={show ? "text" : "password"}

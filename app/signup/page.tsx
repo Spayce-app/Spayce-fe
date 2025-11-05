@@ -8,20 +8,23 @@ import { motion } from "framer-motion";
 import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
-import { signupUser } from "@/lib/api"; 
+import { signupUser } from "@/lib/api";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("customer"); 
+  const [role, setRole] = useState("owner");
   const [show, setShow] = useState(false);
+   const router = useRouter();
 
   const mutation = useMutation({
     mutationFn: signupUser,
     onSuccess: (data) => {
       console.log("Signup successful:", data);
+      router.push('/find-space')
     },
     onError: (error: any) => {
       console.error("Signup failed:", error.message);
@@ -35,14 +38,13 @@ export default function Page() {
       password,
       // name: fullName,
       // phone,
-      role, // 👈 include role
+      role, 
     });
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white text-gray-900">
       <div className="w-full max-w-3xl p-8">
-        {/* Logo */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -56,7 +58,6 @@ export default function Page() {
           </Link>
         </motion.div>
 
-        {/* Heading */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="text-left mb-5">
           <h1 className="text-3xl font-bold">
             <span className="text-primary">Create</span> An Account
@@ -66,7 +67,6 @@ export default function Page() {
           </p>
         </motion.div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-8">
           <Input
             type="email"
@@ -90,7 +90,6 @@ export default function Page() {
             className="rounded-md border-0 h-13 border-b border-gray-300"
           />
 
-          {/* Role Select */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Register as</label>
             <select
@@ -98,12 +97,11 @@ export default function Page() {
               onChange={(e) => setRole(e.target.value)}
               className="w-full rounded-md border-0 h-13 border-b border-gray-300 bg-transparent text-gray-900 focus:ring-0"
             >
-              <option value="customer">Customer</option>
+              <option value="renter">Customer</option>
               <option value="owner">Owner</option>
             </select>
           </div>
 
-          {/* Password with toggle */}
           <div className="relative">
             <Input
               type={show ? "text" : "password"}
