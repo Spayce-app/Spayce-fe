@@ -45,9 +45,6 @@ const SPACE_TYPES = [
   "Private Office",
   "Desk/Co-working",
   "Conference/Meeting Room",
-  "Training Hall",
-  "Event Space",
-  "Others",
 ]
 
 const PRICING_MODELS = ["Hourly", "Daily", "Weekly", "Monthly"]
@@ -57,31 +54,22 @@ const AVAILABILITY_OPTIONS = ["Weekdays", "Weekends", "24/7", "Specific Days"]
 export default function ListSpacePage() {
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState({
-    // Owner Info
     fullName: "",
     email: "",
     phone: "",
     companyName: "",
-
-    // Space Details
     spaceType: "",
     location: "",
     capacity: "",
     amenities: [] as string[],
     photos: [] as File[],
     description: "",
-
-    // Pricing & Availability
     pricingModel: "",
     price: "",
     availability: [] as string[],
     specificDays: "",
-
-    // Verification
     governmentId: null as File | null,
     ownershipProof: null as File | null,
-
-    // Agreement
     confirmOwnership: false,
     agreeTerms: false,
   })

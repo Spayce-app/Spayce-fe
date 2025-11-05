@@ -11,7 +11,6 @@ export const metadata: Metadata = {
   title: "Spayce - Find Your Perfect Workspace",
   description:
     "Browse and book workspaces instantly. 10,000+ workspace options including desks, conference rooms, and private offices.",
-  generator: "v0.app",
 }
 
 export default function RootLayout({
