@@ -15,6 +15,9 @@ import { Upload, Building, User, Camera, FileText, Shield, CheckCircle, ChevronL
 import Link from "next/link"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
+import { useMutation } from "@tanstack/react-query"
+import { listSpaces } from "@/lib/api"
+import { toast } from "sonner"
 
 const STEPS = [
   { id: 1, title: "Owner Info", description: "Tell us about yourself" },
@@ -74,6 +77,7 @@ export default function ListSpacePage() {
     agreeTerms: false,
   })
 
+
   const progress = (currentStep / STEPS.length) * 100
 
   const handleInputChange = (field: string, value: string | number | boolean | File | null) => {
@@ -114,15 +118,24 @@ export default function ListSpacePage() {
     }
   }
 
-  const handleSubmit = () => {
-    console.log("Form submitted:", formData)
-    // Handle form submission
-  }
 
+
+  const mutation = useMutation({
+    mutationFn: listSpaces,
+    onSuccess() {
+      toast.success("Space listed successfully!")
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to list space. Please try again.")
+    },
+  })
+  const handleSubmit = () => {
+    mutation.mutate(formData)
+  }
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
+      <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur hidden supports-[backdrop-filter]:bg-background/60 border-b border-border">
         <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* <div className="flex justify-between items-center h-16">
             <Link href="/" className="flex items-center space-x-2">
@@ -143,15 +156,12 @@ export default function ListSpacePage() {
       </nav>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">List Your Space</h1>
           <p className="text-lg text-muted-foreground">
             Join thousands of hosts earning money by sharing their workspace
           </p>
         </div>
-
-        {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <span className="text-sm font-medium text-foreground">
@@ -162,7 +172,6 @@ export default function ListSpacePage() {
           <Progress value={progress} className="h-2" />
         </div>
 
-        {/* Step Indicators */}
         <div className="flex justify-between mb-8">
           {STEPS.map((step) => (
             <div key={step.id} className="flex flex-col items-center">
@@ -184,7 +193,6 @@ export default function ListSpacePage() {
           ))}
         </div>
 
-        {/* Form Content */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
@@ -197,7 +205,6 @@ export default function ListSpacePage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Step 1: Owner Info */}
             {currentStep === 1 && (
               <div className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
@@ -245,8 +252,6 @@ export default function ListSpacePage() {
                 </div>
               </div>
             )}
-
-            {/* Step 2: Space Details */}
             {currentStep === 2 && (
               <div className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
@@ -331,8 +336,6 @@ export default function ListSpacePage() {
                 </div>
               </div>
             )}
-
-            {/* Step 3: Pricing & Availability */}
             {currentStep === 3 && (
               <div className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
@@ -398,8 +401,6 @@ export default function ListSpacePage() {
                 )}
               </div>
             )}
-
-            {/* Step 4: Verification */}
             {currentStep === 4 && (
               <div className="space-y-6">
                 <div className="space-y-4">
@@ -441,8 +442,6 @@ export default function ListSpacePage() {
                 </div>
               </div>
             )}
-
-            {/* Step 5: Agreement */}
             {currentStep === 5 && (
               <div className="space-y-6">
                 <div className="space-y-4">
@@ -537,7 +536,6 @@ export default function ListSpacePage() {
             )}
           </CardContent>
         </Card>
-
         <div className="flex justify-between mt-8">
           <Button
             variant="outline"
@@ -548,6 +546,15 @@ export default function ListSpacePage() {
             <ChevronLeft className="h-4 w-4" />
             <span>Previous</span>
           </Button>
+          {
+            mutation.isError && (
+              <p className="text-sm text-red-400  text-center">
+                {
+                  mutation.error.message
+                }
+              </p>
+            )
+          }
 
           {currentStep < STEPS.length ? (
             <Button onClick={nextStep} className="flex items-center space-x-2 bg-primary hover:bg-primary/90">
@@ -557,13 +564,17 @@ export default function ListSpacePage() {
           ) : (
             <Button
               onClick={handleSubmit}
-              disabled={!formData.confirmOwnership || !formData.agreeTerms}
+              disabled={!formData.confirmOwnership || !formData.agreeTerms || mutation.isPending}
               className="flex items-center space-x-2 bg-primary hover:bg-primary/90"
             >
               <CheckCircle className="h-4 w-4" />
               <span>Submit Space for Review</span>
+              {
+
+              }
             </Button>
           )}
+
         </div>
       </div>
       <Footer />

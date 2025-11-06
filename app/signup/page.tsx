@@ -5,11 +5,12 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Mail } from "lucide-react";
 import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
-import { signupUser } from "@/lib/api";
+import { sendSignupOTP } from "@/lib/api";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function Page() {
   const [email, setEmail] = useState("");
@@ -18,27 +19,39 @@ export default function Page() {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("owner");
   const [show, setShow] = useState(false);
-   const router = useRouter();
+  const router = useRouter();
 
   const mutation = useMutation({
-    mutationFn: signupUser,
+    mutationFn: sendSignupOTP,
     onSuccess: (data) => {
-      console.log("Signup successful:", data);
-      router.push('/find-space')
+      toast.success("OTP sent to your email!");
+      // Store signup data in sessionStorage for verification page
+      sessionStorage.setItem("signupData", JSON.stringify({
+        email,
+        password,
+        role,
+        fullName,
+        phone,
+      }));
+      router.push(`/verify-otp?email=${encodeURIComponent(email)}&type=signup`);
     },
     onError: (error: any) => {
-      console.error("Signup failed:", error.message);
+      toast.error(error.message || "Failed to send OTP");
     },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email || !password) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
     mutation.mutate({
       email,
       password,
-      // name: fullName,
-      // phone,
-      role, 
+      role,
+      fullName,
+      phone,
     });
   };
 
@@ -63,7 +76,7 @@ export default function Page() {
             <span className="text-primary">Create</span> An Account
           </h1>
           <p className="text-gray-600 text-md w-2xl mt-1">
-            Register now to enjoy seamless shopping, personalized recommendations, and rewards!...
+            Register now to start listing or booking workspaces. We'll send you a verification code.
           </p>
         </motion.div>
 
@@ -97,7 +110,7 @@ export default function Page() {
               onChange={(e) => setRole(e.target.value)}
               className="w-full rounded-md border-0 h-13 border-b border-gray-300 bg-transparent text-gray-900 focus:ring-0"
             >
-              <option value="renter">Customer</option>
+              <option value="renter">Renter</option>
               <option value="owner">Owner</option>
             </select>
           </div>
@@ -122,18 +135,19 @@ export default function Page() {
           <Button
             type="submit"
             size="lg"
-            className="w-full bg-primary text-white hover:bg-green-700 rounded-lg mt-4 transition"
+            className="w-full bg-primary text-white hover:bg-primary/90 rounded-lg mt-4 transition"
             disabled={mutation.isPending}
           >
-            {mutation.isPending ? "Signing Up..." : "Sign Up"}
+            {mutation.isPending ? (
+              <>
+                <Mail className="mr-2 h-4 w-4 animate-pulse" />
+                Sending OTP...
+              </>
+            ) : (
+              "Continue"
+            )}
           </Button>
         </form>
-
-        {mutation.isError && (
-          <p className="text-red-500 mt-4 text-center">
-            {(mutation.error as Error).message}
-          </p>
-        )}
 
         <p className="text-center text-sm mt-6 text-gray-600">
           Already have an account?{" "}

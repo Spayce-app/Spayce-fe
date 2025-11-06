@@ -25,58 +25,150 @@ export async function loginUser(data: { email: string; password: string }) {
   });
 
   if (!res.ok) {
-    const error = await res.json();
+    const error = await res.json().catch(() => ({}));
     throw new Error(error.message || "Login failed");
   }
-  else{
-
-  console.log(res.json)
-  }
-
 
   return res.json();
 }
 
-export  async function getSpace(data:any) {
-  const res = await fetch(`${BASE_URL}//spaces/get-space`,{
+export async function getSpace() {
+  const res = await fetch(`${BASE_URL}/spaces/get-space`, {
     method: 'GET',
-    headers: {
-      'Content-Type':'application/json'
-    },
-  })
-
-  if(!res.ok){
-    const error = await res.json().catch(() => ({}));
-    throw new Error(error.message || 'Error getting spaces')
-  }
-}
-
-export  async function getSpaceById(data:any) {
-  const res = await fetch(`${BASE_URL}//spaces/get-space`,{
-    method: 'GET',
-    headers: {
-      'Content-Type':'application/json'
-    },
-  })
-
-  if(!res.ok){
-    const error = await res.json().catch(() => ({}));
-    throw new Error(error.message || 'Error getting spaces')
-  }
-}
-
-export async function listSpaces(data:any) {
-  const res = await fetch(`${BASE_URL}/spaces/list-space`,{
-    method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(data)
   })
+
   if (!res.ok) {
-      const error = await res.json().catch(() => ({}));
+    const error = await res.json().catch(() => ({}));
     throw new Error(error.message || 'Error getting spaces')
   }
+
+  return res.json();
+}
+
+export async function getSpaceById(id: string) {
+  const res = await fetch(`${BASE_URL}/spaces/get-space/${id}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  })
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.message || 'Error getting space')
+  }
+
+  return res.json();
+}
+
+export async function listSpaces(data: any) {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('No token found');
+  
+  const res = await fetch(`${BASE_URL}/spaces/list-space`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(data)
+  });
+  
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.message || 'Error listing space')
+  }
+
+  return res.json();
+}
+
+
+export async function sendSignupOTP(data: { email: string; password: string; role: string; fullName?: string; phone?: string }) {
+  const res = await fetch(`${BASE_URL}/auth/signup/send-otp`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || "Failed to send OTP");
+  }
+
+  return res.json();
+}
+
+export async function verifySignupOTP(data: { email: string; otp: string }) {
+  const res = await fetch(`${BASE_URL}/auth/signup/verify-otp`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || "OTP verification failed");
+  }
+
+  return res.json();
+}
+
+export async function sendPasswordResetOTP(data: { email: string }) {
+  const res = await fetch(`${BASE_URL}/auth/forgot-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || "Failed to send reset OTP");
+  }
+
+  return res.json();
+}
+
+export async function verifyPasswordResetOTP(data: { email: string; otp: string }) {
+  const res = await fetch(`${BASE_URL}/auth/forgot-password/verify-otp`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || "OTP verification failed");
+  }
+
+  return res.json();
+}
+
+export async function resetPassword(data: { email: string; otp: string; newPassword: string }) {
+  const res = await fetch(`${BASE_URL}/auth/reset-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || "Password reset failed");
+  }
+
+  return res.json();
 }
 
 

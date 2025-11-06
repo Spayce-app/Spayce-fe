@@ -9,6 +9,7 @@ import { Eye, EyeClosed } from "lucide-react";
 import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
 import { loginUser } from "@/lib/api";
+import { toast } from "sonner";
 
 export default function Page() {
   const [email, setEmail] = useState("");
@@ -17,17 +18,21 @@ export default function Page() {
   const loginMutation = useMutation({
     mutationFn: loginUser,
     onSuccess: (data) => {
+      toast.success("Login successful!");
       localStorage.setItem("token", data.data.token);
       window.location.href = "/dashboard";
-      //  console.log("authorisation token",data.data.token)
     },
     onError: (error: any) => {
-      alert(error.message);
+      toast.error(error.message || "Login failed. Please check your credentials.");
     },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email || !password) {
+      toast.error("Please enter both email and password");
+      return;
+    }
     loginMutation.mutate({email,password});
   };
 
@@ -102,11 +107,21 @@ export default function Page() {
             type="submit"
             size={"lg"}
             disabled={loginMutation.isPending}
-            className="w-full bg-primary text-white hover:bg-green-700 rounded-lg mt-4 transition"
+            className="w-full bg-primary text-white hover:bg-primary/90 rounded-lg mt-4 transition"
           >
             {loginMutation.isPending ? "Signing in..." : "Sign In"}
           </Button>
         </form>
+
+        {/* Forgot Password Link */}
+        <div className="text-right mt-4">
+          <Link
+            href="/forgot-password"
+            className="text-sm text-primary hover:underline font-medium"
+          >
+            Forgot Password?
+          </Link>
+        </div>
 
         {/* Bottom Link */}
         <p className="text-center text-sm mt-6 text-gray-600">

@@ -4,6 +4,7 @@ import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
+import { Toaster } from "sonner"
 import "./globals.css"
 import { Providers } from "./providers"
 
@@ -22,8 +23,17 @@ export default function RootLayout({
     <html lang="en">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
         <Providers>
-          <Suspense fallback={<div>loading  app...</div>}>{children}</Suspense>
+          <Suspense fallback={
+            <div className="flex items-center justify-center h-screen w-screen bg-white">
+              <img
+                src="/sapaycelogo.png"
+                alt="App Logo"
+                className="h-40 w-40 animate-pulse"
+              />
+            </div>
+          }>{children}</Suspense>
         </Providers>
+        <Toaster position="top-center" richColors />
         <Analytics />
       </body>
     </html>
