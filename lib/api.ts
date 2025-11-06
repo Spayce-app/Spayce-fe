@@ -87,7 +87,7 @@ export async function listSpaces(data: any) {
 
 
 export async function sendSignupOTP(data: { email: string; password: string; role: string; fullName?: string; phone?: string }) {
-  const res = await fetch(`${BASE_URL}/auth/signup/send-otp`, {
+  const res = await fetch(`${BASE_URL}/auth/signup`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -104,7 +104,7 @@ export async function sendSignupOTP(data: { email: string; password: string; rol
 }
 
 export async function verifySignupOTP(data: { email: string; otp: string }) {
-  const res = await fetch(`${BASE_URL}/auth/signup/verify-otp`, {
+  const res = await fetch(`${BASE_URL}/auth/verify-signup-otp`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -138,7 +138,7 @@ export async function sendPasswordResetOTP(data: { email: string }) {
 }
 
 export async function verifyPasswordResetOTP(data: { email: string; otp: string }) {
-  const res = await fetch(`${BASE_URL}/auth/forgot-password/verify-otp`, {
+  const res = await fetch(`${BASE_URL}/auth/verify-reset-otp`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

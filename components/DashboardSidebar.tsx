@@ -87,8 +87,7 @@ export default function DashboardSidebar() {
         </ul>
       </nav>
 
-      {/* User Profile Section */}
-      <div className="p-4 border-t border-sidebar-border bg-sidebar-accent/30">
+      <div className="p-4 border-t border-sidebar-border">
         <div className="flex items-center space-x-3 mb-3 p-3 rounded-xl bg-sidebar/50 hover:bg-sidebar-accent/50 transition-colors cursor-pointer">
           <Avatar className="h-10 w-10 ring-2 ring-sidebar-border">
             <AvatarImage src="/placeholder.svg?height=40&width=40" />

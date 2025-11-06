@@ -26,8 +26,6 @@ export default function VerifyOTPPage() {
       router.push("/signup")
       return
     }
-
-    // Start countdown timer
     const timer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
@@ -45,7 +43,6 @@ export default function VerifyOTPPage() {
     mutationFn: verifySignupOTP,
     onSuccess: (data) => {
       toast.success("Account verified successfully!")
-      // Store token if provided
       if (data.data?.token) {
         localStorage.setItem("token", data.data.token)
       }

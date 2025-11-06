@@ -20,7 +20,15 @@ export default function Page() {
     onSuccess: (data) => {
       toast.success("Login successful!");
       localStorage.setItem("token", data.data.token);
-      window.location.href = "/dashboard";
+        localStorage.setItem('userRole', data.data.user.role)
+      const userRole = localStorage.getItem('userRole')
+      if (userRole === 'owner') {
+        window.location.href = "/dashboard";
+      }
+      else {
+        window.location.href = "/find-spaces"
+      }
+
     },
     onError: (error: any) => {
       toast.error(error.message || "Login failed. Please check your credentials.");
@@ -33,7 +41,7 @@ export default function Page() {
       toast.error("Please enter both email and password");
       return;
     }
-    loginMutation.mutate({email,password});
+    loginMutation.mutate({ email, password });
   };
 
   return (
@@ -83,7 +91,7 @@ export default function Page() {
               required
               className="rounded-md border-0 h-13 border-b border-black"
             />
-            </div>
+          </div>
           <div className="relative">
             <Input
               type={show ? "text" : "password"}

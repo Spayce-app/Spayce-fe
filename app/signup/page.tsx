@@ -17,7 +17,7 @@ export default function Page() {
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("owner");
+  const [role, setRole] = useState("");
   const [show, setShow] = useState(false);
   const router = useRouter();
 
@@ -25,7 +25,9 @@ export default function Page() {
     mutationFn: sendSignupOTP,
     onSuccess: (data) => {
       toast.success("OTP sent to your email!");
-      // Store signup data in sessionStorage for verification page
+      localStorage.setItem("token", data.data.token);
+      localStorage.setItem('userRole', data.data.user.role)
+      const userRole = localStorage.getItem('userRole')
       sessionStorage.setItem("signupData", JSON.stringify({
         email,
         password,
@@ -33,7 +35,14 @@ export default function Page() {
         fullName,
         phone,
       }));
-      router.push(`/verify-otp?email=${encodeURIComponent(email)}&type=signup`);
+      console.log(data)
+      // router.push(`/verify-otp?email=${encodeURIComponent(email)}&type=signup`);
+      if (userRole === 'owner') {
+        router.push('/dashboard/overview')
+      }
+      else {
+        router.push('/find-spaces')
+      }
     },
     onError: (error: any) => {
       toast.error(error.message || "Failed to send OTP");
@@ -83,33 +92,34 @@ export default function Page() {
         <form onSubmit={handleSubmit} className="space-y-8">
           <Input
             type="email"
-            placeholder="E.g bendee@gmail.com"
+            placeholder="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="rounded-md border-0 h-13 border-b border-gray-300"
           />
           <Input
             type="text"
-            placeholder="E.g John Rim"
+            placeholder="fullname"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             className="rounded-md border-0 h-13 border-b border-gray-300"
           />
           <Input
             type="text"
-            placeholder="E.g (+234) 8123456789"
+            placeholder="phone number"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             className="rounded-md border-0 h-13 border-b border-gray-300"
           />
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Register as</label>
+            {/* <label className="block text-sm font-medium text-gray-700 mb-2">Register as</label> */}
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
               className="w-full rounded-md border-0 h-13 border-b border-gray-300 bg-transparent text-gray-900 focus:ring-0"
             >
+              <option value="">Register as</option>
               <option value="renter">Renter</option>
               <option value="owner">Owner</option>
             </select>
