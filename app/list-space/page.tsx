@@ -1,6 +1,5 @@
 "use client"
-
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -11,7 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separators"
-import { Upload, Building, User, Camera, FileText, Shield, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react"
+import { Upload, Building, User, Camera, FileText, Shield, CheckCircle, ChevronLeft, ChevronRight, X } from "lucide-react"
 import Link from "next/link"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
@@ -45,7 +44,7 @@ const AMENITIES = [
 ]
 
 const SPACE_TYPES = [
-  "Private Office",
+  "Private-Office",
   "Desk/Co-working",
   "Conference/Meeting Room",
 ]
@@ -56,6 +55,7 @@ const AVAILABILITY_OPTIONS = ["Weekdays", "Weekends", "24/7", "Specific Days"]
 
 export default function ListSpacePage() {
   const [currentStep, setCurrentStep] = useState(1)
+  // message: "Workspace validation failed: availability: Cast to string failed for value \"[ 'Weekdays', 'Specific Days' ]\" (type Array) at path \"availability\", pricingModel: `Daily` is not a valid enum value for path `pricingModel`
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -65,7 +65,7 @@ export default function ListSpacePage() {
     location: "",
     capacity: "",
     amenities: [] as string[],
-    photos: [] as File[],
+    images: [] as File[],
     description: "",
     pricingModel: "",
     price: "",
@@ -76,6 +76,15 @@ export default function ListSpacePage() {
     confirmOwnership: false,
     agreeTerms: false,
   })
+
+  const [photoPreviews, setPhotoPreviews] = useState<string[]>([])
+  const photoInputRef = useRef<HTMLInputElement | null>(null)
+
+  useEffect(() => {
+    return () => {
+      photoPreviews.forEach((url) => URL.revokeObjectURL(url))
+    }
+  }, [photoPreviews])
 
 
   const progress = (currentStep / STEPS.length) * 100
@@ -106,6 +115,71 @@ export default function ListSpacePage() {
     setFormData((prev) => ({ ...prev, [field]: file }))
   }
 
+  const MAX_PHOTOS = 8
+  const MAX_PHOTO_SIZE = 10 * 1024 * 1024
+
+  const handlePhotosSelected = (files: FileList | null) => {
+    if (!files?.length) return
+
+    const remainingSlots = MAX_PHOTOS - formData.images.length
+    if (remainingSlots <= 0) {
+      toast.error(`You can upload up to ${MAX_PHOTOS} photos`)
+      if (photoInputRef.current) photoInputRef.current.value = ""
+      return
+    }
+
+    const selected = Array.from(files).slice(0, remainingSlots)
+    const validFiles: File[] = []
+    const previews: string[] = []
+
+    selected.forEach((file) => {
+      if (!file.type.startsWith("image/")) {
+        toast.error(`"${file.name}" is not a supported image type`)
+        return
+      }
+
+      if (file.size > MAX_PHOTO_SIZE) {
+        toast.error(`"${file.name}" is larger than 10MB`)
+        return
+      }
+
+      validFiles.push(file)
+      previews.push(URL.createObjectURL(file))
+    })
+
+    if (!validFiles.length) {
+      if (photoInputRef.current) photoInputRef.current.value = ""
+      return
+    }
+
+    if (files.length > remainingSlots) {
+      toast.error(`Only ${remainingSlots} more photo${remainingSlots === 1 ? "" : "s"} allowed`)
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      images: [...prev.images, ...validFiles],
+    }))
+    setPhotoPreviews((prev) => [...prev, ...previews])
+
+    if (photoInputRef.current) photoInputRef.current.value = ""
+  }
+
+  const handleRemovePhoto = (index: number) => {
+    setFormData((prev) => {
+      const nextPhotos = [...prev.images]
+      nextPhotos.splice(index, 1)
+      return { ...prev, images: nextPhotos }
+    })
+
+    setPhotoPreviews((prev) => {
+      const nextPreviews = [...prev]
+      const [removed] = nextPreviews.splice(index, 1)
+      if (removed) URL.revokeObjectURL(removed)
+      return nextPreviews
+    })
+  }
+
   const nextStep = () => {
     if (currentStep < STEPS.length) {
       setCurrentStep(currentStep + 1)
@@ -130,7 +204,46 @@ export default function ListSpacePage() {
     },
   })
   const handleSubmit = () => {
-    mutation.mutate(formData)
+    if (!formData.confirmOwnership || !formData.agreeTerms) {
+      toast.error("Please confirm ownership and accept the terms.")
+      return
+    }
+
+    if (!formData.images.length) {
+      toast.error("Please upload at least one photo of your space.")
+      setCurrentStep(2)
+      return
+    }
+
+    const payload = new FormData()
+
+    payload.append("fullName", formData.fullName)
+    payload.append("email", formData.email)
+    payload.append("phone", formData.phone)
+    payload.append("companyName", formData.companyName)
+    payload.append("spaceType", formData.spaceType)
+    payload.append("location", formData.location)
+    payload.append("capacity", formData.capacity)
+    payload.append("description", formData.description)
+    payload.append("pricingModel", formData.pricingModel)
+    payload.append("price", formData.price)
+    payload.append("specificDays", formData.specificDays)
+    payload.append("confirmOwnership", String(formData.confirmOwnership))
+    payload.append("agreeTerms", String(formData.agreeTerms))
+
+    formData.amenities.forEach((amenity) => payload.append("amenities", amenity))
+    formData.availability.forEach((option) => payload.append("availability", option))
+    formData.images.forEach((photo) => payload.append("photos", photo))
+
+    if (formData.governmentId) {
+      payload.append("governmentId", formData.governmentId)
+    }
+
+    if (formData.ownershipProof) {
+      payload.append("ownershipProof", formData.ownershipProof)
+    }
+
+    mutation.mutate(payload)
   }
   return (
     <div className="min-h-screen bg-background">
@@ -263,7 +376,7 @@ export default function ListSpacePage() {
                       </SelectTrigger>
                       <SelectContent>
                         {SPACE_TYPES.map((type) => (
-                          <SelectItem key={type} value={type}>
+                          <SelectItem key={type} value={type.toLowerCase()}>
                             {type}
                           </SelectItem>
                         ))}
@@ -325,13 +438,46 @@ export default function ListSpacePage() {
                   <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
                     <Camera className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                     <p className="text-muted-foreground mb-4">Upload high-quality photos of your space</p>
-                    <Button variant="outline">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => photoInputRef.current?.click()}
+                    >
                       <Upload className="h-4 w-4 mr-2" />
-                      Choose Files
+                      {formData.images.length ? "Add More Photos" : "Choose Files"}
                     </Button>
+                    <input
+                      ref={photoInputRef}
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                      onChange={(event) => handlePhotosSelected(event.target.files)}
+                    />
                     <p className="text-xs text-muted-foreground mt-2">
-                      Supported formats: JPG, PNG, WebP. Max 10MB per file.
+                      Supported formats: JPG, PNG, WebP. Max 10MB per file. Up to {MAX_PHOTOS} photos.
                     </p>
+                    {photoPreviews.length > 0 && (
+                      <div className="mt-6 grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {photoPreviews.map((url, index) => (
+                          <div key={url} className="relative group">
+                            <img
+                              src={url}
+                              alt={`workspace photo ${index + 1}`}
+                              className="h-32 w-full rounded-lg object-cover"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleRemovePhoto(index)}
+                              className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                            >
+                              <X className="h-4 w-4" />
+                              <span className="sr-only">Remove photo</span>
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -350,7 +496,7 @@ export default function ListSpacePage() {
                       </SelectTrigger>
                       <SelectContent>
                         {PRICING_MODELS.map((model) => (
-                          <SelectItem key={model} value={model}>
+                          <SelectItem key={model} value={model.toLowerCase()}>
                             {model}
                           </SelectItem>
                         ))}

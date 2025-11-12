@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
@@ -32,6 +32,8 @@ import {
 import Link from "next/link"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import { getSpace } from "@/lib/api"
 
 const mockSpaces = [
   {
@@ -120,13 +122,19 @@ export default function FindSpacesPage() {
   const [showFilters, setShowFilters] = useState(false)
   const [priceRange, setPriceRange] = useState([0, 100])
 
+  const {data, isPending,isError} = useQuery({
+    queryKey: ['get-spaces'],
+    queryFn: getSpace
+  })
+
+  useEffect(() => {
+    console.log(data)
+  })
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation */}
       <Navbar/>
-
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Search Header */}
         <div className="mb-6">
           <div className="flex flex-col md:flex-row gap-4 items-center">
             <div className="flex-1 relative">
@@ -144,8 +152,6 @@ export default function FindSpacesPage() {
             </Button>
           </div>
         </div>
-
-        {/* Filter Tabs */}
         <div className="mb-6">
           <Tabs defaultValue="desk" className="w-full">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
@@ -206,8 +212,6 @@ export default function FindSpacesPage() {
                 </div>
               </div>
             </div>
-
-            {/* Advanced Filters */}
             {showFilters && (
               <Card className="mb-6">
                 <CardContent className="p-6">
@@ -292,8 +296,6 @@ export default function FindSpacesPage() {
             )}
           </Tabs>
         </div>
-
-        {/* Results Header */}
         <div className="flex justify-between items-center mb-6">
           <p className="text-muted-foreground">
             Showing <span className="font-medium">{mockSpaces.length} results</span>
@@ -311,8 +313,6 @@ export default function FindSpacesPage() {
             </SelectContent>
           </Select>
         </div>
-
-        {/* Results Grid/List */}
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             {viewMode === "grid" && (

@@ -33,7 +33,7 @@ export async function loginUser(data: { email: string; password: string }) {
 }
 
 export async function getSpace() {
-  const res = await fetch(`${BASE_URL}/spaces/get-space`, {
+  const res = await fetch(`${BASE_URL}/spaces/get-spaces`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
@@ -64,17 +64,23 @@ export async function getSpaceById(id: string) {
   return res.json();
 }
 
-export async function listSpaces(data: any) {
+export async function listSpaces(data: FormData | Record<string, any>) {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('No token found');
-  
+
+  const isFormData = typeof FormData !== "undefined" && data instanceof FormData;
+
+  const headers: HeadersInit = isFormData
+    ? { Authorization: `Bearer ${token}` }
+    : {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      };
+
   const res = await fetch(`${BASE_URL}/spaces/list-space`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
-    body: JSON.stringify(data)
+    headers,
+    body: isFormData ? data : JSON.stringify(data),
   });
   
   if (!res.ok) {
