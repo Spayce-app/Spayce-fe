@@ -1,9 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { BookingCalendar } from "@/components/ui/booking-calendar"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { motion, AnimatePresence } from "framer-motion"
 import {
   MapPin,
   Wifi,
@@ -22,9 +26,18 @@ import {
   Camera,
   ChevronRight,
   ChevronDown,
+  Calendar,
+  Download,
+  X,
+  Mail,
+  Send,
 } from "lucide-react"
 import Link from "next/link"
 import Navbar from "@/components/Navbar"
+import { useMutation } from "@tanstack/react-query"
+import { createBooking, sendMessageToHost } from "@/lib/api"
+import { openCalendar, downloadICSFile, createCalendarEvent } from "@/lib/calendar-integration"
+import { toast } from "sonner"
 const spaceData = {
   id: 1,
   name: "CENTRL Office - Downtown Sacramento",
@@ -101,6 +114,61 @@ const spaceData = {
 export default function SpaceDetailPage({ params }: { params: { id: string } }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [showAllAmenities, setShowAllAmenities] = useState(false)
+  const [showBookingCalendar, setShowBookingCalendar] = useState(false)
+  const [showContactModal, setShowContactModal] = useState(false)
+  const [contactMessage, setContactMessage] = useState("")
+  const [lastBooking, setLastBooking] = useState<{ date: Date; time: string } | null>(null)
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (showBookingCalendar || showContactModal) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = "unset"
+    }
+    return () => {
+      document.body.style.overflow = "unset"
+    }
+  }, [showBookingCalendar, showContactModal])
+
+  // Handle ESC key to close modal
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (showBookingCalendar) setShowBookingCalendar(false)
+        if (showContactModal) setShowContactModal(false)
+      }
+    }
+    window.addEventListener("keydown", handleEscape)
+    return () => window.removeEventListener("keydown", handleEscape)
+  }, [showBookingCalendar, showContactModal])
+
+  const handleContactHost = () => {
+    setShowContactModal(true)
+  }
+
+  const messageMutation = useMutation({
+    mutationFn: sendMessageToHost,
+    onSuccess: () => {
+      toast.success("Message sent to host! They'll respond within " + spaceData.host.responseTime.toLowerCase())
+      setContactMessage("")
+      setShowContactModal(false)
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to send message. Please try again.")
+    },
+  })
+
+  const handleSendMessage = () => {
+    if (!contactMessage.trim()) {
+      toast.error("Please enter a message")
+      return
+    }
+    messageMutation.mutate({
+      spaceId: params.id,
+      message: contactMessage,
+    })
+  }
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % spaceData.images.length)
@@ -108,6 +176,70 @@ export default function SpaceDetailPage({ params }: { params: { id: string } }) 
 
   const prevImage = () => {
     setCurrentImageIndex((prev) => (prev - 1 + spaceData.images.length) % spaceData.images.length)
+  }
+
+  const handleBookingComplete = async (booking: { date: Date; time: string }) => {
+    return new Promise((resolve, reject) => {
+      const token = localStorage.getItem('token')
+      if (!token) {
+        toast.error("Please log in to make a booking")
+        reject(new Error("No token found"))
+        return
+      }
+
+      createBooking({
+        spaceId: params.id,
+        date: booking.date.toISOString(),
+        time: booking.time,
+        duration: 1,
+      })
+        .then((data) => {
+          // Store booking data for calendar integration
+          // Handle different possible response structures
+          const bookingData = data?.data?.booking || data?.booking || data
+          if (bookingData) {
+            setLastBooking({
+              date: bookingData.date ? new Date(bookingData.date) : booking.date,
+              time: bookingData.time || booking.time,
+            })
+          } else {
+            // Fallback to the booking we just made
+            setLastBooking(booking)
+          }
+          toast.success("Booking confirmed! 🎉")
+          // Close modal after a brief delay to show success
+          setTimeout(() => {
+            setShowBookingCalendar(false)
+          }, 1500)
+          resolve(data)
+        })
+        .catch((error) => {
+          toast.error(error.message || "Failed to create booking. Please try again.")
+          reject(error)
+        })
+    })
+  }
+
+  const handleAddToCalendar = (provider: 'google' | 'outlook' | 'ics') => {
+    if (!lastBooking) {
+      toast.error("Please complete a booking first")
+      return
+    }
+
+    const event = createCalendarEvent(
+      spaceData.name,
+      spaceData.location,
+      lastBooking.date,
+      lastBooking.time
+    )
+
+    if (provider === 'ics') {
+      downloadICSFile(event, `spayce-booking-${spaceData.name.replace(/\s+/g, '-')}.ics`)
+      toast.success("Calendar file downloaded!")
+    } else {
+      openCalendar(event, provider)
+      toast.success(`Opening ${provider === 'google' ? 'Google' : 'Outlook'} Calendar...`)
+    }
   }
 
   return (
@@ -150,11 +282,39 @@ export default function SpaceDetailPage({ params }: { params: { id: string } }) 
 
                 {/* Action Buttons */}
                 <div className="absolute top-4 right-4 flex space-x-2">
-                  <Button size="sm" variant="secondary" className="bg-white/90 hover:bg-white">
+                  <Button 
+                    size="sm" 
+                    variant="secondary" 
+                    className="bg-white/90 hover:bg-white"
+                    onClick={() => {
+                      if (navigator.share) {
+                        navigator.share({
+                          title: spaceData.name,
+                          text: spaceData.description,
+                          url: window.location.href,
+                        }).catch(() => {
+                          // Fallback to copy
+                          navigator.clipboard.writeText(window.location.href)
+                          toast.success("Link copied to clipboard!")
+                        })
+                      } else {
+                        navigator.clipboard.writeText(window.location.href)
+                        toast.success("Link copied to clipboard!")
+                      }
+                    }}
+                  >
                     <Share className="h-4 w-4 mr-1" />
                     Share
                   </Button>
-                  <Button size="sm" variant="secondary" className="bg-white/90 hover:bg-white">
+                  <Button 
+                    size="sm" 
+                    variant="secondary" 
+                    className="bg-white/90 hover:bg-white"
+                    onClick={() => {
+                      // TODO: Implement favorite/save functionality
+                      toast.success("Space saved to favorites!")
+                    }}
+                  >
                     <Heart className="h-4 w-4" />
                   </Button>
                 </div>
@@ -316,7 +476,14 @@ export default function SpaceDetailPage({ params }: { params: { id: string } }) 
                   ))}
                 </div>
 
-                <Button variant="outline" className="w-full mt-6 bg-transparent">
+                <Button 
+                  variant="outline" 
+                  className="w-full mt-6 bg-transparent"
+                  onClick={() => {
+                    // TODO: Navigate to full reviews page or expand reviews
+                    toast.info("Showing all reviews...")
+                  }}
+                >
                   Show all reviews
                 </Button>
               </CardContent>
@@ -334,13 +501,52 @@ export default function SpaceDetailPage({ params }: { params: { id: string } }) 
                     <div className="text-muted-foreground">{spaceData.priceUnit}</div>
                   </div>
 
-                  <Button className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground text-lg mb-4">
-                    Reserve Desk - ₦{spaceData.price * 1000} per day
+                  <Button
+                    onClick={() => setShowBookingCalendar(true)}
+                    className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground text-lg mb-4"
+                  >
+                    <Calendar className="h-5 w-5 mr-2" />
+                    Select Date & Time
                   </Button>
 
-                  <div className="text-center text-sm text-muted-foreground">You will not be charged yet</div>
+                  <div className="text-center text-sm text-muted-foreground">Instant booking available</div>
                 </CardContent>
               </Card>
+
+              {/* Calendar Integration */}
+              {lastBooking && (
+                <Card>
+                  <CardContent className="p-6">
+                    <h3 className="text-lg font-semibold mb-4">Add to Calendar</h3>
+                    <div className="space-y-2">
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start"
+                        onClick={() => handleAddToCalendar("google")}
+                      >
+                        <Calendar className="h-4 w-4 mr-2" />
+                        Add to Google Calendar
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start"
+                        onClick={() => handleAddToCalendar("outlook")}
+                      >
+                        <Calendar className="h-4 w-4 mr-2" />
+                        Add to Outlook Calendar
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start"
+                        onClick={() => handleAddToCalendar("ics")}
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Download .ics File
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Host Info */}
               <Card>
@@ -372,7 +578,12 @@ export default function SpaceDetailPage({ params }: { params: { id: string } }) 
                     </div>
                   </div>
 
-                  <Button variant="outline" className="w-full mt-4 bg-transparent">
+                  <Button 
+                    variant="outline" 
+                    className="w-full mt-4 bg-transparent"
+                    onClick={handleContactHost}
+                  >
+                    <Mail className="h-4 w-4 mr-2" />
                     Contact Host
                   </Button>
                 </CardContent>
@@ -395,6 +606,195 @@ export default function SpaceDetailPage({ params }: { params: { id: string } }) 
           </div>
         </div>
       </div>
+
+      {/* Booking Calendar Modal */}
+      <AnimatePresence>
+        {showBookingCalendar && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setShowBookingCalendar(false)
+              }
+            }}
+          >
+            {/* Backdrop */}
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+
+            {/* Modal Content */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="relative z-50 w-full max-w-6xl max-h-[95vh] bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className="sticky top-0 bg-white z-10 border-b border-border px-6 py-5 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1 font-medium">
+                    Booking
+                  </p>
+                  <h2 className="text-2xl font-bold text-foreground">
+                    Select date & time for {spaceData.name}
+                  </h2>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowBookingCalendar(false)}
+                  className="h-9 w-9 rounded-full hover:bg-muted transition-colors"
+                  aria-label="Close modal"
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+
+              {/* Modal Body - Scrollable */}
+              <div className="overflow-y-auto flex-1 px-6 py-6">
+                <BookingCalendar
+                  spaceId={params.id}
+                  price={spaceData.price * 1000}
+                  priceUnit={spaceData.priceUnit}
+                  instantBooking={true}
+                  onBookingComplete={handleBookingComplete}
+                  availableHours={[
+                    "9:00 AM",
+                    "10:00 AM",
+                    "11:00 AM",
+                    "12:00 PM",
+                    "1:00 PM",
+                    "2:00 PM",
+                    "3:00 PM",
+                    "4:00 PM",
+                    "5:00 PM",
+                  ]}
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Contact Host Modal */}
+      <AnimatePresence>
+        {showContactModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setShowContactModal(false)
+              }
+            }}
+          >
+            {/* Backdrop */}
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+
+            {/* Modal Content */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="relative z-50 w-full max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className="px-6 py-5 border-b border-border flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1 font-medium">
+                    Contact
+                  </p>
+                  <h2 className="text-2xl font-bold text-foreground">
+                    Message {spaceData.host.name}
+                  </h2>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowContactModal(false)}
+                  className="h-9 w-9 rounded-full hover:bg-muted transition-colors"
+                  aria-label="Close modal"
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-6 space-y-6">
+                <div className="flex items-center space-x-4 pb-4 border-b border-border">
+                  <Avatar className="h-12 w-12">
+                    <AvatarImage src={spaceData.host.avatar || "/placeholder.svg"} />
+                    <AvatarFallback>
+                      {spaceData.host.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-semibold">{spaceData.host.name}</p>
+                    <p className="text-sm text-muted-foreground">
+                      Response time: {spaceData.host.responseTime}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="message">Your Message</Label>
+                  <Textarea
+                    id="message"
+                    placeholder="Ask about availability, amenities, or any questions you have about this space..."
+                    value={contactMessage}
+                    onChange={(e) => setContactMessage(e.target.value)}
+                    rows={6}
+                    className="resize-none"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    {contactMessage.length} characters
+                  </p>
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowContactModal(false)}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleSendMessage}
+                    disabled={messageMutation.isPending}
+                    className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
+                  >
+                    {messageMutation.isPending ? (
+                      <>
+                        <span className="animate-spin mr-2">⏳</span>
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="h-4 w-4 mr-2" />
+                        Send Message
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

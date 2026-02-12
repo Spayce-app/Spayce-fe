@@ -177,4 +177,75 @@ export async function resetPassword(data: { email: string; otp: string; newPassw
   return res.json();
 }
 
+export async function createBooking(data: {
+  spaceId: string;
+  date: string;
+  time: string;
+  duration?: number;
+}) {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('No token found');
+
+  const res = await fetch(`${BASE_URL}/bookings/create`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.message || 'Error creating booking');
+  }
+
+  return res.json();
+}
+
+export async function getBookingsBySpace(spaceId: string) {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('No token found');
+
+  const res = await fetch(`${BASE_URL}/bookings/space/${spaceId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.message || 'Error fetching bookings');
+  }
+
+  return res.json();
+}
+
+export async function sendMessageToHost(data: {
+  spaceId: string;
+  hostId?: string;
+  message: string;
+}) {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('No token found');
+
+  const res = await fetch(`${BASE_URL}/messages/send`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.message || 'Error sending message');
+  }
+
+  return res.json();
+}
+
 

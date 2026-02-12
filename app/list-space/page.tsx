@@ -115,6 +115,25 @@ export default function ListSpacePage() {
     setFormData((prev) => ({ ...prev, [field]: file }))
   }
 
+  const handleDocumentUpload = (field: "governmentId" | "ownershipProof", event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] || null
+    if (file) {
+      // Validate file type
+      const validTypes = ["image/jpeg", "image/png", "image/jpg", "application/pdf"]
+      if (!validTypes.includes(file.type)) {
+        toast.error("Please upload a JPG, PNG, or PDF file")
+        return
+      }
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("File size must be less than 5MB")
+        return
+      }
+      handleFileUpload(field, file)
+      toast.success(`${field === "governmentId" ? "Government ID" : "Ownership proof"} uploaded successfully`)
+    }
+  }
+
   const MAX_PHOTOS = 8
   const MAX_PHOTO_SIZE = 10 * 1024 * 1024
 
@@ -556,10 +575,34 @@ export default function ListSpacePage() {
                     <p className="text-sm text-muted-foreground mb-3">
                       Upload a clear photo of your government-issued ID
                     </p>
-                    <Button variant="outline" size="sm">
-                      <Upload className="h-4 w-4 mr-2" />
-                      Upload ID
-                    </Button>
+                    {formData.governmentId ? (
+                      <div className="space-y-2">
+                        <p className="text-sm text-primary font-medium">{formData.governmentId.name}</p>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleFileUpload("governmentId", null)}
+                        >
+                          <X className="h-4 w-4 mr-2" />
+                          Remove
+                        </Button>
+                      </div>
+                    ) : (
+                      <label>
+                        <input
+                          type="file"
+                          accept="image/*,.pdf"
+                          className="hidden"
+                          onChange={(e) => handleDocumentUpload("governmentId", e)}
+                        />
+                        <Button variant="outline" size="sm" asChild>
+                          <span>
+                            <Upload className="h-4 w-4 mr-2" />
+                            Upload ID
+                          </span>
+                        </Button>
+                      </label>
+                    )}
                   </div>
                 </div>
 
@@ -570,10 +613,34 @@ export default function ListSpacePage() {
                     <p className="text-sm text-muted-foreground mb-3">
                       Upload utility bill, CAC document, or lease agreement
                     </p>
-                    <Button variant="outline" size="sm">
-                      <Upload className="h-4 w-4 mr-2" />
-                      Upload Document
-                    </Button>
+                    {formData.ownershipProof ? (
+                      <div className="space-y-2">
+                        <p className="text-sm text-primary font-medium">{formData.ownershipProof.name}</p>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleFileUpload("ownershipProof", null)}
+                        >
+                          <X className="h-4 w-4 mr-2" />
+                          Remove
+                        </Button>
+                      </div>
+                    ) : (
+                      <label>
+                        <input
+                          type="file"
+                          accept="image/*,.pdf"
+                          className="hidden"
+                          onChange={(e) => handleDocumentUpload("ownershipProof", e)}
+                        />
+                        <Button variant="outline" size="sm" asChild>
+                          <span>
+                            <Upload className="h-4 w-4 mr-2" />
+                            Upload Document
+                          </span>
+                        </Button>
+                      </label>
+                    )}
                   </div>
                 </div>
 

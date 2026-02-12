@@ -34,6 +34,7 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { getSpace } from "@/lib/api"
+import { toast } from "sonner"
 
 const mockSpaces = [
   {
@@ -146,7 +147,14 @@ export default function FindSpacesPage() {
                 className="pl-10 h-12 text-lg border-border focus:ring-primary"
               />
             </div>
-            <Button className="h-12 px-8 bg-primary hover:bg-primary/90 text-primary-foreground">
+            <Button 
+              className="h-12 px-8 bg-primary hover:bg-primary/90 text-primary-foreground"
+              onClick={() => {
+                // TODO: Implement actual search functionality with API
+                toast.info(`Searching for: ${searchQuery}`)
+                // This would trigger a refetch with search params
+              }}
+            >
               <Search className="mr-2 h-5 w-5" />
               Search
             </Button>
