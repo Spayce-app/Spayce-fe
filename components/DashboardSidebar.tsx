@@ -1,85 +1,81 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import Image from "next/image"
 import {
+  LayoutDashboard,
   Building2,
   Calendar,
   BarChart3,
   MessageSquare,
   Settings,
-  Home,
   LogOut,
-  ChevronRight,
 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
 
 const sidebarItems = [
-  { id: "overview", label: "Overview", icon: Home, href: "/dashboard/overview" },
-  { id: "spaces", label: "My Spaces", icon: Building2, href: "/dashboard/spaces" },
-  { id: "bookings", label: "Bookings", icon: Calendar, href: "/dashboard/bookings" },
+  { id: "overview", label: "Dashboard", icon: LayoutDashboard, href: "/dashboard/overview" },
   { id: "analytics", label: "Analytics", icon: BarChart3, href: "/dashboard/analytics" },
+  { id: "bookings", label: "Bookings", icon: Calendar, href: "/dashboard/bookings" },
+  { id: "spaces", label: "Spaces", icon: Building2, href: "/dashboard/spaces" },
   { id: "reviews", label: "Reviews", icon: MessageSquare, href: "/dashboard/reviews" },
   { id: "settings", label: "Settings", icon: Settings, href: "/dashboard/settings" },
 ]
 
 export default function DashboardSidebar() {
   const pathname = usePathname()
+  const router = useRouter()
 
   return (
-    <aside className="w-72 bg-sidebar border-r border-sidebar-border flex flex-col shadow-lg h-screen sticky top-0">
+    <aside className="w-64 bg-white border-r border-gray-100 flex flex-col h-screen sticky top-0 shrink-0">
       {/* Logo Section */}
-      <div className="p-6 border-b border-sidebar-border">
-        <Link href="/" className="flex items-center space-x-3 group">
-          <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
-            <Image 
-              src="/sapaycelogo.png" 
-              alt="Spayce Logo" 
-              fill
+      <div className="p-6 border-b border-gray-100/80">
+        <Link href="/" className="flex items-center gap-3 group" aria-label="Spayce - Home">
+          <div className="relative w-10 h-10 rounded-xl bg-primary flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+            <Image
+              src="/sapaycelogo.png"
+              alt=""
+              width={40}
+              height={40}
               className="object-contain p-1.5"
-              priority
             />
           </div>
           <div>
-            <span className="text-2xl font-bold text-sidebar-foreground">Spayce</span>
-            <p className="text-xs text-muted-foreground">Dashboard</p>
+            <span className="text-base font-bold text-gray-800 block">Spayce Host</span>
+            <span className="text-xs font-medium text-primary">Premium Tier</span>
           </div>
         </Link>
       </div>
 
       {/* Navigation */}
       <nav className="flex-1 px-4 py-6 overflow-y-auto">
-        <ul className="space-y-1.5">
+        <ul className="space-y-1">
           {sidebarItems.map((item) => {
             const Icon = item.icon
-            const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
-            
+            const isActive =
+              pathname === item.href || pathname.startsWith(item.href + "/")
+
             return (
               <li key={item.id}>
                 <Link
                   href={item.href}
                   className={cn(
-                    "w-full flex items-center justify-between px-4 py-3 rounded-xl text-left transition-all duration-200 group",
+                    "flex items-center gap-3 px-4 py-3 rounded-full text-sm font-medium transition-all duration-200",
                     isActive
-                      ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-md"
-                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                      ? "bg-primary/10 text-primary shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
                   )}
                 >
-                  <div className="flex items-center space-x-3">
-                    <Icon 
-                      className={cn(
-                        "h-5 w-5 transition-transform",
-                        isActive ? "scale-110" : "group-hover:scale-105"
-                      )} 
-                    />
-                    <span className="font-medium text-sm">{item.label}</span>
-                  </div>
-                  {isActive && (
-                    <ChevronRight className="h-4 w-4 opacity-70" />
-                  )}
+                  <Icon
+                    className={cn(
+                      "h-5 w-5 shrink-0",
+                      isActive ? "text-primary" : "text-gray-500"
+                    )}
+                  />
+                  <span>{item.label}</span>
                 </Link>
               </li>
             )
@@ -87,33 +83,32 @@ export default function DashboardSidebar() {
         </ul>
       </nav>
 
-      <div className="p-4 border-t border-sidebar-border">
-        <div className="flex items-center space-x-3 mb-3 p-3 rounded-xl bg-sidebar/50 hover:bg-sidebar-accent/50 transition-colors cursor-pointer">
-          <Avatar className="h-10 w-10 ring-2 ring-sidebar-border">
-            <AvatarImage src="/placeholder.svg?height=40&width=40" />
-            <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
-              JD
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-sidebar-foreground truncate">
-              John Doe
-            </p>
-            <p className="text-xs text-muted-foreground truncate">
-              Space Owner
-            </p>
+      {/* User Profile & Logout */}
+      <div className="p-4">
+        <div className="rounded-2xl bg-gray-50/80 p-4 space-y-4 border border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+          <div className="flex items-center gap-3">
+            <Avatar className="h-10 w-10 rounded-full border-2 border-white shadow-sm">
+              <AvatarFallback className="bg-amber-100 text-amber-800 text-sm font-semibold">
+                AM
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-gray-800 truncate">
+                Alex Morgan
+              </p>
+              <p className="text-xs text-gray-500">Host Member</p>
+            </div>
           </div>
+          <Button
+            variant="ghost"
+            className="w-full rounded-xl bg-primary/10 text-primary hover:bg-primary/15 font-medium text-sm h-10 shadow-sm"
+            onClick={() => router.push("/signin")}
+          >
+            <LogOut className="h-4 w-4 mr-2" />
+            Logout
+          </Button>
         </div>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground rounded-xl"
-        >
-          <LogOut className="h-4 w-4 mr-2" />
-          Sign Out
-        </Button>
       </div>
     </aside>
   )
 }
-

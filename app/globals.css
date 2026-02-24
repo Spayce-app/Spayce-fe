@@ -3,32 +3,50 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * Spayce Design System — Soft & Professional Web Surface
+ * — Primary: Green (actions, links, ratings)
+ * — Accent: Amber (secondary highlights)
+ * — Footer: orange-950 bg, orange-400 links
+ * — Surfaces: rounded-xl/2xl, soft shadows, smooth transitions
+ * — Images: rounded corners, overflow-hidden
+ * Typography: Display 4xl-6xl | H1 2xl-3xl | H2 xl | H3 lg | Body sm | Caption xs
+ */
+
+/* Soft elevation shadows */
+.shadow-soft {
+  box-shadow: 0 2px 12px -2px rgba(0, 0, 0, 0.08), 0 4px 16px -4px rgba(0, 0, 0, 0.06);
+}
+.shadow-soft-hover:hover {
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.1), 0 8px 24px -4px rgba(0, 0, 0, 0.08);
+}
+
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.345 0.004 258.338);
-  --card: oklch(0.976 0.006 258.338);
-  --card-foreground: oklch(0.345 0.004 258.338);
+  --background: oklch(0.99 0.002 240);
+  --foreground: oklch(0.18 0.02 260);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.02 260);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.345 0.004 258.338);
-  --primary: oklch(0.454 0.152 166.014);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.627 0.142 166.014);
-  --secondary-foreground: oklch(1 0 0);
-  --muted: oklch(0.976 0.006 258.338);
-  --muted-foreground: oklch(0.345 0.004 258.338);
-  --accent: oklch(0.627 0.142 166.014);
-  --accent-foreground: oklch(1 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.922 0.013 258.338);
+  --popover-foreground: oklch(0.18 0.02 260);
+  --primary: oklch(0.35 0.12 150);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.93 0.02 150);
+  --secondary-foreground: oklch(0.25 0.06 150);
+  --muted: oklch(0.96 0.01 260);
+  --muted-foreground: oklch(0.45 0.02 260);
+  --accent: oklch(0.72 0.12 75);
+  --accent-foreground: oklch(0.2 0.03 45);
+  --destructive: oklch(0.55 0.22 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.9 0.01 260);
   --input: oklch(1 0 0);
-  --ring: oklch(0.627 0.142 166.014);
-  --chart-1: oklch(0.454 0.152 166.014);
-  --chart-2: oklch(0.627 0.142 166.014);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.345 0.004 258.338);
-  --chart-5: oklch(0.976 0.006 258.338);
-  --radius: 0.5rem;
+  --ring: oklch(0.35 0.12 150);
+  --chart-1: oklch(0.35 0.12 150);
+  --chart-2: oklch(0.55 0.15 45);
+  --chart-3: oklch(0.45 0.1 220);
+  --chart-4: oklch(0.55 0.12 280);
+  --chart-5: oklch(0.5 0.1 180);
+  --radius: 0.625rem;
   --sidebar: oklch(1 0 0);
   --sidebar-foreground: oklch(0.345 0.004 258.338);
   --sidebar-primary: oklch(0.454 0.152 166.014);
@@ -40,20 +58,20 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.627 0.142 166.014);
-  --primary-foreground: oklch(0.145 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.627 0.142 166.014);
-  --accent-foreground: oklch(0.145 0 0);
+  --background: oklch(0.12 0.01 260);
+  --foreground: oklch(0.96 0 0);
+  --card: oklch(0.16 0.01 260);
+  --card-foreground: oklch(0.96 0 0);
+  --popover: oklch(0.16 0.01 260);
+  --popover-foreground: oklch(0.96 0 0);
+  --primary: oklch(0.5 0.14 150);
+  --primary-foreground: oklch(0.12 0 0);
+  --secondary: oklch(0.22 0.02 260);
+  --secondary-foreground: oklch(0.96 0 0);
+  --muted: oklch(0.22 0.01 260);
+  --muted-foreground: oklch(0.65 0 0);
+  --accent: oklch(0.7 0.12 75);
+  --accent-foreground: oklch(0.12 0 0);
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.637 0.237 25.331);
   --border: oklch(0.269 0 0);
@@ -75,8 +93,8 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", "Source Code Pro", monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -120,7 +138,10 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground text-sm antialiased;
+  }
+  html {
+    scroll-behavior: smooth;
   }
 }
 
@@ -135,4 +156,71 @@
 
 .animate-caret-blink {
   animation: caret-blink 1s infinite;
+}
+
+/* Premium polish animations */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Stagger children */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.1s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.2s; }
+.stagger-5 { animation-delay: 0.25s; }
+.stagger-6 { animation-delay: 0.3s; }
+
+/* Smooth transitions for interactive elements */
+.transition-smooth {
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Subtle gradient overlay for hero */
+.hero-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.2) 0%,
+    rgba(0, 0, 0, 0.6) 50%,
+    rgba(0, 0, 0, 0.75) 100%
+  );
 }

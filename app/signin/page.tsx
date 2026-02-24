@@ -45,7 +45,7 @@ export default function Page() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white text-gray-900">
+    <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
       <div className="w-full max-w-3xl p-8">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -62,9 +62,7 @@ export default function Page() {
                 blurDataURL="data:image/svg+xml;base64,..."
               />
             </div>
-            <span className="text-2xl absolute top-7 -right-14 font-bold text-primary">
-              spayce
-            </span>
+            <span className="text-xl font-bold text-primary tracking-tight">Spayce</span>
           </Link>
         </motion.div>
         <motion.div
@@ -89,7 +87,7 @@ export default function Page() {
               onChange={(e) => setEmail(e.target.value)}
               noRing
               required
-              className="rounded-md border-0 h-13 border-b border-black"
+              className="rounded-xl h-12 border border-border focus:border-primary/50 transition-all"
             />
           </div>
           <div className="relative">

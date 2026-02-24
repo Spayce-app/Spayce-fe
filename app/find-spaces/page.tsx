@@ -1,481 +1,438 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
+import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Slider } from "@/components/ui/slider"
 import {
-  Search,
-  MapPin,
-  Users,
   Wifi,
   Car,
   Coffee,
-  Shield,
   Star,
-  Filter,
-  Grid3X3,
-  List,
   Map,
-  Clock,
   Zap,
-  Monitor,
-  Utensils,
-  Printer,
-  Volume2,
+  Users,
+  Heart,
+  Check,
 } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
-import { useMutation, useQuery } from "@tanstack/react-query"
-import { getSpace } from "@/lib/api"
-import { toast } from "sonner"
 
 const mockSpaces = [
   {
     id: 1,
-    name: "Pacific Workplaces - J Street DOCO",
-    location: "Downtown, Sacramento",
-    distance: "10.0 miles",
-    openTime: "8:30am on 9/8",
-    price: 25,
-    priceUnit: "per day",
-    rating: 4.8,
-    image: "heroimg.jpg",
-    amenities: ["Desks", "3 Meeting rooms"],
-    features: ["WiFi", "Coffee", "Parking"],
+    name: "Executive Desk in Victori...",
+    location: "Victoria Island, Lagos",
+    price: 15000,
+    rating: 4.9,
+    image: "/heroimg.jpg",
+    topRated: true,
+    features: ["WiFi", "Power", "Parking", "Coffee", "People"],
   },
   {
     id: 2,
-    name: "CENTRL Office - Downtown Sacramento",
-    location: "Mansion Flats, Sacramento",
-    distance: "10.3 miles",
-    openTime: "9:00am on 9/8",
-    price: 40,
-    priceUnit: "per day",
-    rating: 4.9,
-    image: "herimg2.jpg",
-    amenities: ["Desks", "4 Meeting rooms", "1 Office room"],
-    features: ["WiFi", "Coffee", "Parking", "Printing"],
+    name: "Villa Lagos Coworking",
+    location: "Victoria Island, Lagos",
+    price: 25000,
+    rating: 4.8,
+    image: "/heroimg2.jpg",
+    topRated: false,
+    features: ["WiFi", "Power", "Parking", "Coffee"],
   },
   {
     id: 3,
-    name: "Creative Hub - Midtown",
-    location: "Midtown, Sacramento",
-    distance: "8.5 miles",
-    openTime: "7:00am on 9/8",
-    price: 35,
-    priceUnit: "per day",
-    rating: 4.7,
-    image: "heroimg3.jpg",
-    amenities: ["Desks", "2 Meeting rooms"],
-    features: ["WiFi", "Coffee", "24/7 Access"],
+    name: "Co-Creation Hub",
+    location: "Yaba, Lagos",
+    price: 40000,
+    rating: 4.9,
+    image: "/heroimg3.jpg",
+    topRated: true,
+    features: ["WiFi", "Power", "Parking", "Coffee", "People"],
   },
   {
     id: 4,
-    name: "Tech Valley Coworking",
-    location: "East Sacramento",
-    distance: "12.1 miles",
-    openTime: "8:00am on 9/8",
-    price: 30,
-    priceUnit: "per day",
-    rating: 4.6,
-    image: "heroimg5.jpg",
-    amenities: ["Desks", "1 Meeting room", "Phone booths"],
-    features: ["WiFi", "Coffee", "Parking", "Printing"],
+    name: "Leadspace Lekki",
+    location: "Lekki Phase 1, Lagos",
+    price: 35000,
+    rating: 4.7,
+    image: "/heroimg5.jpg",
+    topRated: false,
+    features: ["WiFi", "Power", "Coffee"],
   },
   {
     id: 5,
-    name: "Executive Suites Downtown",
-    location: "Financial District, Sacramento",
-    distance: "9.8 miles",
-    openTime: "8:00am on 9/8",
-    price: 55,
-    priceUnit: "per day",
-    rating: 4.9,
-    image: "heroimg6.jpg",
-    amenities: ["Private Offices", "3 Meeting rooms"],
-    features: ["WiFi", "Coffee", "Parking", "Reception"],
+    name: "Spark Innovation Hub",
+    location: "Ikeja, Lagos",
+    price: 30000,
+    rating: 4.6,
+    image: "/heroimg6.jpg",
+    topRated: true,
+    features: ["WiFi", "Power", "Parking", "People"],
   },
   {
     id: 6,
-    name: "Startup Incubator Space",
-    location: "Natomas, Sacramento",
-    distance: "15.2 miles",
-    openTime: "24/7 Access",
-    price: 28,
-    priceUnit: "per day",
-    rating: 4.5,
-    image: "heroimg7.jpg",
-    amenities: ["Desks", "2 Meeting rooms", "Event space"],
-    features: ["WiFi", "Coffee", "24/7 Access", "Kitchen"],
+    name: "Eko Innovation Centre",
+    location: "Lagos Island, Lagos",
+    price: 55000,
+    rating: 4.9,
+    image: "/heroimg7.jpg",
+    topRated: false,
+    features: ["WiFi", "Power", "Parking", "Coffee", "People"],
   },
 ]
 
+const spaceTypes = [
+  { id: "private", label: "Private Office" },
+  { id: "desk", label: "Dedicated Desk" },
+  { id: "meeting", label: "Meeting Room" },
+]
+
+const amenityOptions = [
+  { id: "wifi", label: "High-speed Wi-Fi", icon: Wifi },
+  { id: "power", label: "Uninterrupted Power", icon: Zap },
+  { id: "parking", label: "Free Parking", icon: Car },
+  { id: "coffee", label: "Coffee Bar", icon: Coffee },
+]
+
+const moodOptions = ["Productive", "Creative", "Quiet", "Social"]
+
+function AmenityIcon({ name }: { name: string }) {
+  switch (name) {
+    case "WiFi":
+      return <Wifi className="h-3.5 w-3.5 text-muted-foreground" />
+    case "Power":
+      return <Zap className="h-3.5 w-3.5 text-muted-foreground" />
+    case "Parking":
+      return <Car className="h-3.5 w-3.5 text-muted-foreground" />
+    case "Coffee":
+      return <Coffee className="h-3.5 w-3.5 text-muted-foreground" />
+    case "People":
+      return <Users className="h-3.5 w-3.5 text-muted-foreground" />
+    default:
+      return null
+  }
+}
+
 export default function FindSpacesPage() {
-  const [searchQuery, setSearchQuery] = useState("Lekki, Lagos")
-  const [viewMode, setViewMode] = useState<"grid" | "list" | "map">("grid")
-  const [showFilters, setShowFilters] = useState(false)
-  const [priceRange, setPriceRange] = useState([0, 100])
-
-  const {data, isPending,isError} = useQuery({
-    queryKey: ['get-spaces'],
-    queryFn: getSpace
-  })
-
-  useEffect(() => {
-    console.log(data)
+  const [spaceType, setSpaceType] = useState("private")
+  const [priceRange, setPriceRange] = useState([5, 100])
+  const [selectedMood, setSelectedMood] = useState("Productive")
+  const [showMap, setShowMap] = useState(false)
+  const [amenities, setAmenities] = useState({
+    wifi: true,
+    power: true,
+    parking: false,
+    coffee: false,
   })
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar/>
-      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="mb-6">
-          <div className="flex flex-col md:flex-row gap-4 items-center">
-            <div className="flex-1 relative">
-              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-              <Input
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by city or workspace name..."
-                className="pl-10 h-12 text-lg border-border focus:ring-primary"
-              />
-            </div>
-            <Button 
-              className="h-12 px-8 bg-primary hover:bg-primary/90 text-primary-foreground"
-              onClick={() => {
-                // TODO: Implement actual search functionality with API
-                toast.info(`Searching for: ${searchQuery}`)
-                // This would trigger a refetch with search params
-              }}
+    <div className="min-h-screen bg-[#F4F5F7]">
+      <Navbar />
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        {/* Page header */}
+        <motion.div
+          className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+              Workspaces in Lagos
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              Showing 124 available spaces for today
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Select defaultValue="popular">
+              <SelectTrigger className="w-[180px] h-10 rounded-xl border-border/60 bg-white shadow-soft">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="popular">Most Popular</SelectItem>
+                <SelectItem value="price-low">Price: Low to High</SelectItem>
+                <SelectItem value="price-high">Price: High to Low</SelectItem>
+                <SelectItem value="rating">Highest Rated</SelectItem>
+                <SelectItem value="distance">Nearest First</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              variant={showMap ? "default" : "outline"}
+              className="rounded-xl border-border/60"
+              onClick={() => setShowMap(!showMap)}
             >
-              <Search className="mr-2 h-5 w-5" />
-              Search
+              <Map className="h-4 w-4 mr-2" />
+              Map View
             </Button>
           </div>
-        </div>
-        <div className="mb-6">
-          <Tabs defaultValue="desk" className="w-full">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-              <TabsList className="grid w-full md:w-auto grid-cols-4 md:grid-cols-4">
-                <TabsTrigger value="desk" className="flex items-center gap-2">
-                  <Monitor className="h-4 w-4" />
-                  Desk
-                </TabsTrigger>
-                <TabsTrigger value="meet" className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  Meet
-                </TabsTrigger>
-                <TabsTrigger value="office" className="flex items-center gap-2">
-                  <Shield className="h-4 w-4" />
-                  Office
-                </TabsTrigger>
-                <TabsTrigger value="all" className="flex items-center gap-2">
-                  <Grid3X3 className="h-4 w-4" />
-                  All
-                </TabsTrigger>
-              </TabsList>
+        </motion.div>
 
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="flex items-center gap-2"
-                >
-                  <Filter className="h-4 w-4" />
-                  Filters
-                </Button>
+        {/* Main layout: sidebar + content */}
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Left sidebar - Filters */}
+          <motion.aside
+            className="w-full lg:w-72 shrink-0"
+            initial={{ opacity: 0, x: -12 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="rounded-2xl bg-white shadow-soft border border-border/40 p-6 space-y-8 sticky top-24">
+              {/* SPACE TYPE */}
+              <div>
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+                  Space Type
+                </h3>
+                <div className="space-y-2">
+                  {spaceTypes.map((type) => (
+                    <button
+                      key={type.id}
+                      onClick={() => setSpaceType(type.id)}
+                      className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-all ${
+                        spaceType === type.id
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted/50 text-foreground hover:bg-muted"
+                      }`}
+                    >
+                      {spaceType === type.id && <Check className="h-4 w-4 shrink-0" />}
+                      <span className={spaceType === type.id ? "" : "ml-7"}>{type.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-                <div className="flex items-center border rounded-lg">
-                  <Button
-                    variant={viewMode === "grid" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setViewMode("grid")}
-                    className="rounded-r-none"
-                  >
-                    <Grid3X3 className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant={viewMode === "list" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setViewMode("list")}
-                    className="rounded-none"
-                  >
-                    <List className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant={viewMode === "map" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setViewMode("map")}
-                    className="rounded-l-none"
-                  >
-                    <Map className="h-4 w-4" />
-                  </Button>
+              {/* PRICE RANGE */}
+              <div className="border-t border-border/60 pt-6">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+                  Price Range (₦)
+                </h3>
+                <div className="space-y-4">
+                  <Slider
+                    value={priceRange}
+                    onValueChange={setPriceRange}
+                    min={1}
+                    max={100}
+                    step={1}
+                    className="w-full [&_[role=slider]]:bg-primary"
+                  />
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>₦{priceRange[0]}k</span>
+                    <span>₦{priceRange[1]}k+</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* AMENITIES */}
+              <div className="border-t border-border/60 pt-6">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+                  Amenities
+                </h3>
+                <div className="space-y-3">
+                  {amenityOptions.map(({ id, label, icon: Icon }) => (
+                    <label
+                      key={id}
+                      className="flex items-center gap-3 cursor-pointer group"
+                    >
+                      <Checkbox
+                        checked={amenities[id as keyof typeof amenities] ?? false}
+                        onCheckedChange={(checked) =>
+                          setAmenities((prev) => ({ ...prev, [id]: !!checked }))
+                        }
+                        className="rounded data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                      />
+                      <Icon className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                        {label}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* VIBE & MOOD */}
+              <div className="border-t border-border/60 pt-6">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+                  Vibe & Mood
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {moodOptions.map((mood) => (
+                    <button
+                      key={mood}
+                      onClick={() => setSelectedMood(mood)}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                        selectedMood === mood
+                          ? "bg-primary text-primary-foreground shadow-sm"
+                          : "bg-muted/50 text-foreground hover:bg-muted"
+                      }`}
+                    >
+                      {mood}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
-            {showFilters && (
-              <Card className="mb-6">
-                <CardContent className="p-6">
-                  <div className="grid md:grid-cols-4 gap-6">
-                    <div>
-                      <h4 className="font-medium mb-3">Date & Time</h4>
-                      <div className="space-y-2">
-                        <Input type="date" className="w-full" />
-                        <Select>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Time" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="morning">Morning (8AM-12PM)</SelectItem>
-                            <SelectItem value="afternoon">Afternoon (12PM-6PM)</SelectItem>
-                            <SelectItem value="evening">Evening (6PM-10PM)</SelectItem>
-                            <SelectItem value="allday">All Day</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
+          </motion.aside>
 
-                    <div>
-                      <h4 className="font-medium mb-3">Amenities</h4>
-                      <div className="space-y-2">
-                        {[
-                          { id: "wifi", label: "WiFi", icon: Wifi },
-                          { id: "coffee", label: "Coffee", icon: Coffee },
-                          { id: "parking", label: "Parking", icon: Car },
-                          { id: "printing", label: "Printing", icon: Printer },
-                        ].map(({ id, label, icon: Icon }) => (
-                          <div key={id} className="flex items-center space-x-2">
-                            <Checkbox id={id} />
-                            <label htmlFor={id} className="flex items-center gap-2 text-sm">
-                              <Icon className="h-4 w-4" />
-                              {label}
-                            </label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <h4 className="font-medium mb-3">Mood</h4>
-                      <div className="space-y-2">
-                        {[
-                          { id: "quiet", label: "Quiet", icon: Volume2 },
-                          { id: "collaborative", label: "Collaborative", icon: Users },
-                          { id: "energetic", label: "Energetic", icon: Zap },
-                          { id: "professional", label: "Professional", icon: Shield },
-                        ].map(({ id, label, icon: Icon }) => (
-                          <div key={id} className="flex items-center space-x-2">
-                            <Checkbox id={id} />
-                            <label htmlFor={id} className="flex items-center gap-2 text-sm">
-                              <Icon className="h-4 w-4" />
-                              {label}
-                            </label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <h4 className="font-medium mb-3">Price Range</h4>
-                      <div className="space-y-4">
-                        <Slider
-                          value={priceRange}
-                          onValueChange={setPriceRange}
-                          max={100}
-                          step={5}
-                          className="w-full"
-                        />
-                        <div className="flex justify-between text-sm text-muted-foreground">
-                          <span>₦{priceRange[0] * 1000}</span>
-                          <span>₦{priceRange[1] * 1000}+</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </Tabs>
-        </div>
-        <div className="flex justify-between items-center mb-6">
-          <p className="text-muted-foreground">
-            Showing <span className="font-medium">{mockSpaces.length} results</span>
-          </p>
-          <Select defaultValue="relevance">
-            <SelectTrigger className="w-48">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="relevance">Sort by Relevance</SelectItem>
-              <SelectItem value="price-low">Price: Low to High</SelectItem>
-              <SelectItem value="price-high">Price: High to Low</SelectItem>
-              <SelectItem value="rating">Highest Rated</SelectItem>
-              <SelectItem value="distance">Nearest First</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="grid lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            {viewMode === "grid" && (
-              <div className="grid md:grid-cols-2 gap-6">
-                {mockSpaces.map((space) => (
-                  <Link key={space.id} href={`/spaces/${space.id}`}>
-                    <Card className="group hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
-                      <div className="aspect-video relative overflow-hidden">
-                        <img
+          {/* Main content - workspace cards */}
+          <div className="flex-1 min-w-0">
+            <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              {mockSpaces.map((space, idx) => (
+                <motion.div
+                  key={space.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.45,
+                    delay: idx * 0.05,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                >
+                  <Link href={`/spaces/${space.id}`}>
+                    <Card className="group overflow-hidden border-0 bg-white rounded-2xl shadow-soft hover:shadow-soft-hover transition-all duration-300 h-full flex flex-col">
+                      <div className="relative aspect-[4/3] overflow-hidden">
+                        <Image
                           src={space.image || "/placeholder.svg"}
                           alt={space.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
                         />
-                        <div className="absolute top-4 right-4">
-                          <Badge variant={'secondary'} className="bg-white/90 text-foreground">
-                            <Star className="w-3 h-3 mr-1 fill-current" />
-                            {space.rating}
-                          </Badge>
-                        </div>
+                        {space.topRated && (
+                          <div className="absolute top-3 left-3">
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-primary text-primary-foreground shadow-sm">
+                              TOP RATED
+                            </span>
+                          </div>
+                        )}
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault()
+                            // TODO: toggle favorite
+                          }}
+                          className="absolute top-3 right-3 p-2 rounded-full bg-white/90 hover:bg-white shadow-sm transition-colors"
+                          aria-label="Save"
+                        >
+                          <Heart className="h-4 w-4 text-foreground" />
+                        </button>
                       </div>
-                      <CardContent className="p-4">
-                        <h3 className="font-semibold text-md mb-1">{space.name}</h3>
-                        <p className="text-muted-foreground text-sm mb-2">
-                          {space.location} • {space.distance} • Opens at {space.openTime}
+                      <CardContent className="p-5 flex-1 flex flex-col">
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <h3 className="font-semibold text-base text-foreground line-clamp-1">
+                            {space.name}
+                          </h3>
+                          <span className="inline-flex items-center gap-0.5 text-sm font-medium text-foreground shrink-0">
+                            <Star className="h-4 w-4 fill-primary text-primary" />
+                            {space.rating}
+                          </span>
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-4">
+                          {space.location}
                         </p>
-
-                        <div className="flex flex-wrap gap-1 mb-3">
-                          {space.amenities.map((amenity) => (
-                            <Badge key={amenity} variant="secondary" className="text-xs">
-                              {amenity}
-                            </Badge>
+                        <div className="flex items-center gap-3 text-muted-foreground mb-4">
+                          {space.features.map((f) => (
+                            <AmenityIcon key={f} name={f} />
                           ))}
                         </div>
-
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3 text-xs text-muted-foreground">
-                            {space.features.slice(0, 3).map((feature) => (
-                              <span key={feature} className="flex items-center">
-                                {feature === "WiFi" && <Wifi className="w-3 h-3 mr-1" />}
-                                {feature === "Coffee" && <Coffee className="w-3 h-3 mr-1" />}
-                                {feature === "Parking" && <Car className="w-3 h-3 mr-1" />}
-                                {feature === "Printing" && <Printer className="w-3 h-3 mr-1" />}
-                                {feature === "24/7 Access" && <Clock className="w-3 h-3 mr-1" />}
-                                {feature === "Reception" && <Users className="w-3 h-3 mr-1" />}
-                                {feature === "Kitchen" && <Utensils className="w-3 h-3 mr-1" />}
-                                {feature}
-                              </span>
-                            ))}
+                        <div className="mt-auto flex items-center justify-between">
+                          <div>
+                            <p className="font-bold text-lg text-foreground">
+                              ₦{space.price.toLocaleString()}
+                            </p>
+                            <p className="text-xs text-muted-foreground">PER DAY</p>
                           </div>
-                          <div className="text-right">
-                            <p className="font-semibold text-lg">₦{space.price * 1000}</p>
-                            <p className="text-xs text-muted-foreground">{space.priceUnit}</p>
-                          </div>
+                          <span className="inline-flex">
+                            <Button
+                              size="sm"
+                              className="rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-md shadow-primary/20 pointer-events-none"
+                            >
+                              Book Now
+                            </Button>
+                          </span>
                         </div>
                       </CardContent>
                     </Card>
                   </Link>
-                ))}
-            
-              </div>
-            )}
-
-            {viewMode === "list" && (
-              <div className="space-y-4">
-                {mockSpaces.map((space) => (
-                  <Link key={space.id} href={`/spaces/${space.id}`}>
-                    <Card className="group hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
-                      <CardContent className="p-0">
-                        <div className="flex">
-                          <div className="w-48 h-32 relative overflow-hidden">
-                            <img
-                              src={space.image || "/placeholder.svg"}
-                              alt={space.name}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
-                            <div className="absolute top-2 right-2">
-                              <Badge className="bg-white/90 text-foreground text-xs">
-                                <Star className="w-3 h-3 mr-1 fill-current" />
-                                {space.rating}
-                              </Badge>
-                            </div>
-                          </div>
-                          <div className="flex-1 p-4">
-                            <div className="flex justify-between items-start">
-                              <div className="flex-1">
-                                <h3 className="font-semibold text-lg mb-1">{space.name}</h3>
-                                <p className="text-muted-foreground text-sm mb-2">
-                                  {space.location} • {space.distance} • Opens at {space.openTime}
-                                </p>
-
-                                <div className="flex flex-wrap gap-1 mb-2">
-                                  {space.amenities.map((amenity) => (
-                                    <Badge key={amenity} variant="secondary" className="text-xs">
-                                      {amenity}
-                                    </Badge>
-                                  ))}
-                                </div>
-
-                                <div className="flex items-center space-x-4 text-xs text-muted-foreground">
-                                  {space.features.map((feature) => (
-                                    <span key={feature} className="flex items-center">
-                                      {feature === "WiFi" && <Wifi className="w-3 h-3 mr-1" />}
-                                      {feature === "Coffee" && <Coffee className="w-3 h-3 mr-1" />}
-                                      {feature === "Parking" && <Car className="w-3 h-3 mr-1" />}
-                                      {feature === "Printing" && <Printer className="w-3 h-3 mr-1" />}
-                                      {feature === "24/7 Access" && <Clock className="w-3 h-3 mr-1" />}
-                                      {feature === "Reception" && <Users className="w-3 h-3 mr-1" />}
-                                      {feature === "Kitchen" && <Utensils className="w-3 h-3 mr-1" />}
-                                      {feature}
-                                    </span>
-                                  ))}
-                                </div>
-                              </div>
-                              <div className="text-right ml-4">
-                                <p className="font-semibold text-xl">₦{space.price * 1000}</p>
-                                <p className="text-sm text-muted-foreground">{space.priceUnit}</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                ))}
-              </div>
-            )}
-
-            {viewMode === "map" && (
-              <div className="h-96 bg-muted rounded-lg flex items-center justify-center">
-                <div className="text-center">
-                  <Map className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">Interactive map view would be implemented here</p>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Showing {mockSpaces.length} spaces in the selected area
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="hidden lg:block">
-            <div className="sticky top-24">
-              <Card className="overflow-hidden">
-                <div className="h-96 bg-muted flex items-center justify-center">
-                  <div className="text-center">
-                    <Map className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground">Map View</p>
-                  </div>
-                </div>
-              </Card>
+                </motion.div>
+              ))}
             </div>
+
+            {/* Pagination */}
+            <motion.div
+              className="flex items-center justify-center gap-2 mt-10 pb-24 lg:pb-0"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-xl h-9 w-9 p-0 border-border/60"
+              >
+                ‹
+              </Button>
+              <Button
+                size="sm"
+                className="rounded-xl h-9 w-9 p-0 bg-primary text-primary-foreground"
+              >
+                1
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-xl h-9 w-9 p-0 border-border/60"
+              >
+                2
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-xl h-9 w-9 p-0 border-border/60"
+              >
+                3
+              </Button>
+              <span className="px-2 text-muted-foreground">…</span>
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-xl h-9 w-9 p-0 border-border/60"
+              >
+                12
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-xl h-9 w-9 p-0 border-border/60"
+              >
+                ›
+              </Button>
+            </motion.div>
           </div>
-          
         </div>
+
+        {/* Show Map floating button (mobile) */}
+        <motion.div
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 lg:hidden z-30"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <Button
+            variant="secondary"
+            className="rounded-full px-6 py-6 h-auto bg-gray-800 hover:bg-gray-900 text-white shadow-lg"
+            onClick={() => setShowMap(!showMap)}
+          >
+            <Map className="h-4 w-4 mr-2" />
+            Show Map
+          </Button>
+        </motion.div>
       </div>
-          <Footer/>
+      <Footer />
     </div>
   )
 }

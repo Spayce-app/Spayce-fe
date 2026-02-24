@@ -55,7 +55,6 @@ const AVAILABILITY_OPTIONS = ["Weekdays", "Weekends", "24/7", "Specific Days"]
 
 export default function ListSpacePage() {
   const [currentStep, setCurrentStep] = useState(1)
-  // message: "Workspace validation failed: availability: Cast to string failed for value \"[ 'Weekdays', 'Specific Days' ]\" (type Array) at path \"availability\", pricingModel: `Daily` is not a valid enum value for path `pricingModel`
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -267,31 +266,12 @@ export default function ListSpacePage() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur hidden supports-[backdrop-filter]:bg-background/60 border-b border-border">
-        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-lg">S</span>
-              </div>
-              <span className="text-xl font-bold text-foreground">spayce</span>
-            </Link>
 
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" className="text-foreground hover:text-primary">
-                Help
-              </Button>
-              <Button variant="outline">Save Draft</Button>
-            </div>
-          </div> */}
-        </div>
-      </nav>
-
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">List Your Space</h1>
-          <p className="text-lg text-muted-foreground">
-            Join thousands of hosts earning money by sharing their workspace
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
+        <div className="text-center mb-10">
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3 tracking-tight">List Your Space</h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Join hosts across Nigeria earning by sharing their workspace. Simple process, transparent earnings.
           </p>
         </div>
         <div className="mb-8">
@@ -308,7 +288,7 @@ export default function ListSpacePage() {
           {STEPS.map((step) => (
             <div key={step.id} className="flex flex-col items-center">
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${step.id < currentStep
+                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium shadow-sm transition-all ${step.id < currentStep
                   ? "bg-primary text-primary-foreground"
                   : step.id === currentStep
                     ? "bg-primary text-primary-foreground"
@@ -325,8 +305,8 @@ export default function ListSpacePage() {
           ))}
         </div>
 
-        <Card>
-          <CardHeader>
+        <Card className="border border-transparent shadow-soft">
+          <CardHeader className="pb-6">
             <CardTitle className="flex items-center space-x-2">
               {currentStep === 1 && <User className="h-5 w-5" />}
               {currentStep === 2 && <Building className="h-5 w-5" />}

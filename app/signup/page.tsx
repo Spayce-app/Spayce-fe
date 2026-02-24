@@ -84,7 +84,7 @@ export default function Page() {
           <h1 className="text-3xl font-bold">
             <span className="text-primary">Create</span> An Account
           </h1>
-          <p className="text-gray-600 text-md w-2xl mt-1">
+          <p className="text-gray-600 text-base max-w-2xl mt-1">
             Register now to start listing or booking workspaces. We'll send you a verification code.
           </p>
         </motion.div>

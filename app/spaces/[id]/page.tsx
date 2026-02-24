@@ -2,12 +2,20 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { BookingCalendar } from "@/components/ui/booking-calendar"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { motion, AnimatePresence } from "framer-motion"
+import Image from "next/image"
 import {
   MapPin,
   Wifi,
@@ -15,111 +23,178 @@ import {
   Coffee,
   Shield,
   Star,
-  ChevronLeft,
   Share,
   Heart,
-  Clock,
-  Printer,
-  Phone,
-  Utensils,
-  AirVent,
-  Camera,
   ChevronRight,
-  ChevronDown,
   Calendar,
   Download,
   X,
   Mail,
   Send,
+  Zap,
+  CheckCircle2,
+  Printer,
+  Monitor,
+  Utensils,
+  AirVent,
 } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import Navbar from "@/components/Navbar"
+import Footer from "@/components/Footer"
 import { useMutation } from "@tanstack/react-query"
 import { createBooking, sendMessageToHost } from "@/lib/api"
-import { openCalendar, downloadICSFile, createCalendarEvent } from "@/lib/calendar-integration"
+import {
+  openCalendar,
+  downloadICSFile,
+  createCalendarEvent,
+} from "@/lib/calendar-integration"
 import { toast } from "sonner"
+import { format, addDays, differenceInDays } from "date-fns"
+
 const spaceData = {
   id: 1,
-  name: "CENTRL Office - Downtown Sacramento",
-  location: "1201 J Street • Mansion Flats, Sacramento",
-  rating: 4.9,
-  reviewCount: 127,
-  price: 40,
+  name: "Premium Coworking Suite - Victoria Island",
+  area: "Victoria Island",
+  city: "Lagos",
+  country: "Nigeria",
+  location: "Victoria Island, Lagos, Nigeria",
+  fullLocation: "294 Herbert Macaulay Way • Victoria Island, Lagos",
+  rating: 4.8,
+  reviewCount: 124,
+  price: 15000,
   priceUnit: "per day",
   images: [
     "/spaceimg1.jpg",
     "/spaceimg2.jpg",
     "/spaceimg3.jpg",
     "/spaceimg4.jpg",
+    "/heroimg5.jpg",
   ],
-  description:
-    "A modern, professional workspace in the heart of downtown Sacramento. Perfect for individuals and teams looking for a productive environment with all the amenities you need.",
+  sqft: 2400,
+  capacity: 24,
+  meetingRooms: 6,
+  description: `This premium coworking space is strategically located in the heart of Victoria Island, offering startups, freelancers, and remote teams a professional environment to thrive. Whether you need a quiet desk for focused work or a collaborative area for team projects, this space delivers.
+
+The space features ergonomic Herman Miller chairs, sound-proof phone booths for private calls, and high-speed fiber optic internet. Enjoy the rooftop terrace for breaks and networking, with stunning views of Lagos.`,
   amenities: [
-    { icon: Wifi, label: "High-Speed WiFi", included: true },
-    { icon: Coffee, label: "Complimentary Coffee", included: true },
-    { icon: Car, label: "Parking Available", included: true },
-    { icon: Printer, label: "Printing & Scanning", included: true },
-    { icon: Phone, label: "Phone Booths", included: true },
-    { icon: Utensils, label: "Kitchen Access", included: true },
-    { icon: AirVent, label: "Air Conditioning", included: true },
-    { icon: Shield, label: "24/7 Security", included: true },
+    { icon: Wifi, label: "High-speed Fiber WiFi (100 Mbps)", included: true },
+    {
+      icon: Coffee,
+      label: "Unlimited Specialty Coffee & Tea",
+      included: true,
+    },
+    {
+      icon: Printer,
+      label: "Business-grade Printing & Scanning",
+      included: true,
+    },
+    {
+      icon: AirVent,
+      label: "Central Air Conditioning",
+      included: true,
+    },
+    { icon: Car, label: "Secure On-site Parking", included: true },
+    {
+      icon: Monitor,
+      label: "Equipped Video Conferencing",
+      included: true,
+    },
+    { icon: Shield, label: "Private Lockers", included: true },
+    {
+      icon: Utensils,
+      label: "Fully Equipped Kitchenette",
+      included: true,
+    },
   ],
-  spaces: {
-    meetingRooms: 4,
-    officeSpaces: 1,
-    desks: 12,
-    capacity: 25,
-  },
-  hours: {
-    weekdays: "8:00 AM - 6:00 PM",
-    weekends: "9:00 AM - 5:00 PM",
-  },
+  totalAmenitiesCount: 32,
   host: {
-    name: "Sarah Johnson",
+    id: "1",
+    name: "Chidi",
     avatar: "/placeholder.svg?key=host1",
-    joinedDate: "2022",
+    joinedDate: "2023",
     responseTime: "Within 1 hour",
     rating: 4.9,
   },
+  keyFeatures: [
+    {
+      icon: Star,
+      title: "Elite Workspace",
+      desc: "Recognized as one of the top 5% coworking spaces in Victoria Island for service quality.",
+    },
+    {
+      icon: Zap,
+      title: "24/7 Power Guaranteed",
+      desc: "Redundant power systems including inverter and industrial-grade generators.",
+    },
+    {
+      icon: CheckCircle2,
+      title: "Free cancellation",
+      desc: "Cancel up to 24 hours before your booking for a full refund.",
+    },
+  ],
   reviews: [
     {
       id: 1,
-      author: "Michael Chen",
+      author: "Amaka O.",
+      location: "Lagos, Nigeria",
       avatar: "/placeholder.svg?key=rev1",
       rating: 5,
       date: "2 weeks ago",
       comment:
-        "Excellent workspace with great amenities. The meeting rooms are well-equipped and the staff is very helpful.",
+        "Fantastic space! The internet was incredibly fast and the atmosphere was very professional. Perfect for client meetings.",
     },
     {
       id: 2,
-      author: "Lisa Rodriguez",
+      author: "Babajide S.",
+      location: "Ibadan, Nigeria",
       avatar: "/placeholder.svg?key=rev2",
       rating: 5,
       date: "1 month ago",
       comment:
-        "Perfect location in downtown Sacramento. Clean, modern, and professional environment. Highly recommend!",
+        "The power supply was seamless during my 2-day stay. The coffee is definitely a plus! I'll definitely be back.",
     },
-    {
-      id: 3,
-      author: "David Kim",
-      avatar: "/placeholder.svg?key=rev3",
-      rating: 4,
-      date: "2 months ago",
-      comment: "Great space for team meetings. The parking is convenient and the coffee is actually good!",
-    },
+  ],
+  mapDescription:
+    "Walking distance to Eko Hotels and various banking headquarters.",
+  planTypes: [
+    { value: "daily", label: "Daily Desk Access" },
+    { value: "weekly", label: "Weekly Pass" },
+    { value: "monthly", label: "Monthly Membership" },
   ],
 }
 
-export default function SpaceDetailPage({ params }: { params: { id: string } }) {
+export default function SpaceDetailPage({
+  params,
+}: {
+  params: { id: string }
+}) {
+  const router = useRouter()
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [showAllAmenities, setShowAllAmenities] = useState(false)
+  const [showMoreDescription, setShowMoreDescription] = useState(false)
   const [showBookingCalendar, setShowBookingCalendar] = useState(false)
   const [showContactModal, setShowContactModal] = useState(false)
   const [contactMessage, setContactMessage] = useState("")
-  const [lastBooking, setLastBooking] = useState<{ date: Date; time: string } | null>(null)
+  const [lastBooking, setLastBooking] = useState<{
+    date: Date
+    time: string
+  } | null>(null)
 
-  // Prevent body scroll when modal is open
+  const [checkIn, setCheckIn] = useState(format(addDays(new Date(), 1), "yyyy-MM-dd"))
+  const [checkOut, setCheckOut] = useState(format(addDays(new Date(), 2), "yyyy-MM-dd"))
+  const [planType, setPlanType] = useState("daily")
+
+  const checkInDate = new Date(checkIn)
+  const checkOutDate = new Date(checkOut)
+  const nights = Math.max(
+    1,
+    differenceInDays(checkOutDate, checkInDate)
+  )
+  const subtotal = spaceData.price * nights
+  const serviceFee = Math.round(subtotal * 0.08)
+  const total = subtotal + serviceFee
+
   useEffect(() => {
     if (showBookingCalendar || showContactModal) {
       document.body.style.overflow = "hidden"
@@ -131,7 +206,6 @@ export default function SpaceDetailPage({ params }: { params: { id: string } }) 
     }
   }, [showBookingCalendar, showContactModal])
 
-  // Handle ESC key to close modal
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -143,19 +217,20 @@ export default function SpaceDetailPage({ params }: { params: { id: string } }) 
     return () => window.removeEventListener("keydown", handleEscape)
   }, [showBookingCalendar, showContactModal])
 
-  const handleContactHost = () => {
-    setShowContactModal(true)
-  }
-
   const messageMutation = useMutation({
     mutationFn: sendMessageToHost,
     onSuccess: () => {
-      toast.success("Message sent to host! They'll respond within " + spaceData.host.responseTime.toLowerCase())
+      toast.success(
+        "Message sent! Host will respond within " +
+          spaceData.host.responseTime.toLowerCase()
+      )
       setContactMessage("")
       setShowContactModal(false)
     },
-    onError: (error: any) => {
-      toast.error(error.message || "Failed to send message. Please try again.")
+    onError: (error: unknown) => {
+      toast.error(
+        (error as Error).message || "Failed to send message. Please try again."
+      )
     },
   })
 
@@ -170,17 +245,12 @@ export default function SpaceDetailPage({ params }: { params: { id: string } }) 
     })
   }
 
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % spaceData.images.length)
-  }
-
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + spaceData.images.length) % spaceData.images.length)
-  }
-
-  const handleBookingComplete = async (booking: { date: Date; time: string }) => {
+  const handleBookingComplete = async (booking: {
+    date: Date
+    time: string
+  }) => {
     return new Promise((resolve, reject) => {
-      const token = localStorage.getItem('token')
+      const token = localStorage.getItem("token")
       if (!token) {
         toast.error("Please log in to make a booking")
         reject(new Error("No token found"))
@@ -194,418 +264,516 @@ export default function SpaceDetailPage({ params }: { params: { id: string } }) 
         duration: 1,
       })
         .then((data) => {
-          // Store booking data for calendar integration
-          // Handle different possible response structures
-          const bookingData = data?.data?.booking || data?.booking || data
-          if (bookingData) {
+          const bookingData =
+            (data as { data?: { booking?: unknown }; booking?: unknown })
+              ?.data?.booking || (data as { booking?: unknown })?.booking || data
+          if (bookingData && typeof bookingData === "object" && "date" in bookingData) {
             setLastBooking({
-              date: bookingData.date ? new Date(bookingData.date) : booking.date,
-              time: bookingData.time || booking.time,
+              date: new Date((bookingData as { date: string }).date),
+              time: (bookingData as { time?: string }).time || booking.time,
             })
           } else {
-            // Fallback to the booking we just made
             setLastBooking(booking)
           }
           toast.success("Booking confirmed! 🎉")
-          // Close modal after a brief delay to show success
-          setTimeout(() => {
-            setShowBookingCalendar(false)
-          }, 1500)
+          setTimeout(() => setShowBookingCalendar(false), 1500)
           resolve(data)
         })
-        .catch((error) => {
-          toast.error(error.message || "Failed to create booking. Please try again.")
+        .catch((error: unknown) => {
+          toast.error(
+            (error as Error).message ||
+              "Failed to create booking. Please try again."
+          )
           reject(error)
         })
     })
   }
 
-  const handleAddToCalendar = (provider: 'google' | 'outlook' | 'ics') => {
+  const handleAddToCalendar = (provider: "google" | "outlook" | "ics") => {
     if (!lastBooking) {
       toast.error("Please complete a booking first")
       return
     }
-
     const event = createCalendarEvent(
       spaceData.name,
-      spaceData.location,
+      spaceData.fullLocation,
       lastBooking.date,
       lastBooking.time
     )
-
-    if (provider === 'ics') {
-      downloadICSFile(event, `spayce-booking-${spaceData.name.replace(/\s+/g, '-')}.ics`)
+    if (provider === "ics") {
+      downloadICSFile(
+        event,
+        `spayce-booking-${spaceData.name.replace(/\s+/g, "-")}.ics`
+      )
       toast.success("Calendar file downloaded!")
     } else {
       openCalendar(event, provider)
-      toast.success(`Opening ${provider === 'google' ? 'Google' : 'Outlook'} Calendar...`)
+      toast.success(
+        `Opening ${provider === "google" ? "Google" : "Outlook"} Calendar...`
+      )
     }
+  }
+
+  const handleBookNow = () => {
+    const checkoutData = {
+      spaceId: params.id,
+      hostId: spaceData.host.id,
+      spaceName: spaceData.name,
+      spaceImage: spaceData.images[0] || "/heroimg.jpg",
+      address: spaceData.fullLocation,
+      rating: spaceData.rating,
+      reviewCount: spaceData.reviewCount,
+      pricePerDay: spaceData.price,
+      checkIn,
+      checkOut,
+      startTime: "9:00 AM",
+      endTime: "6:00 PM",
+      hostName: spaceData.host.name,
+      hostAvatar: spaceData.host.avatar,
+      hostSince: "2023",
+      superhost: true,
+    }
+    sessionStorage.setItem("spayce_checkout", JSON.stringify(checkoutData))
+    router.push("/checkout")
   }
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar/>
+      <Navbar />
 
-      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="flex items-center space-x-2 text-sm text-muted-foreground mb-6">
-          <Link href="/find-spaces" className="hover:text-primary flex items-center">
-            <ChevronLeft className="h-4 w-4 mr-1" />
-            Back to search
-          </Link>
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+        {/* Breadcrumbs */}
+        <nav
+          className="text-sm text-muted-foreground mb-6"
+          aria-label="Breadcrumb"
+        >
+          <ol className="flex flex-wrap items-center gap-1">
+            <li>
+              <Link
+                href="/find-spaces"
+                className="hover:text-primary transition-colors"
+              >
+                {spaceData.city}
+              </Link>
+            </li>
+            <li>/</li>
+            <li>
+              <Link
+                href="/find-spaces"
+                className="hover:text-primary transition-colors"
+              >
+                {spaceData.area}
+              </Link>
+            </li>
+            <li>/</li>
+            <li className="text-foreground font-medium">Coworking Spaces</li>
+          </ol>
+        </nav>
+
+        {/* Title, rating, Share/Save */}
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight mb-2">
+              {spaceData.name}
+            </h1>
+            <div className="flex flex-wrap items-center gap-2 text-muted-foreground">
+              <span className="flex items-center gap-1 font-medium text-foreground">
+                <Star className="h-4 w-4 fill-primary text-primary" />
+                {spaceData.rating}
+              </span>
+              <span>({spaceData.reviewCount} reviews)</span>
+              <span>•</span>
+              <span>{spaceData.location}</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-xl border-border/60"
+              onClick={() => {
+                if (navigator.share) {
+                  navigator
+                    .share({
+                      title: spaceData.name,
+                      text: spaceData.description,
+                      url: window.location.href,
+                    })
+                    .catch(() => {
+                      navigator.clipboard.writeText(window.location.href)
+                      toast.success("Link copied!")
+                    })
+                } else {
+                  navigator.clipboard.writeText(window.location.href)
+                  toast.success("Link copied!")
+                }
+              }}
+            >
+              <Share className="h-4 w-4 mr-1.5" />
+              Share
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-xl border-border/60"
+              onClick={() => toast.success("Saved to favorites!")}
+            >
+              <Heart className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-6">
-            <div className="relative">
-              <div className="aspect-video relative overflow-hidden rounded-lg">
-                <img
-                  src={spaceData.images[currentImageIndex] || "/placeholder.svg"}
-                  alt={`${spaceData.name} - Image ${currentImageIndex + 1}`}
-                  className="w-full h-full object-cover"
+        {/* Image Gallery */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-10 rounded-2xl overflow-hidden">
+          <div className="relative aspect-[4/3] md:aspect-auto md:row-span-2 md:min-h-[400px]">
+            <Image
+              src={spaceData.images[currentImageIndex] || "/placeholder.svg"}
+              alt={spaceData.name}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 60vw"
+              priority
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-2 relative">
+            {spaceData.images.slice(1, 5).map((img, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentImageIndex(idx + 1)}
+                className="relative aspect-[4/3] overflow-hidden rounded-lg"
+              >
+                <Image
+                  src={img}
+                  alt={`${spaceData.name} ${idx + 2}`}
+                  fill
+                  className="object-cover hover:scale-105 transition-transform duration-300"
+                  sizes="(max-width: 768px) 50vw, 20vw"
                 />
-                <button
-                  onClick={prevImage}
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
-                >
-                  <ChevronLeft className="h-5 w-5" />
-                </button>
-                <button
-                  onClick={nextImage}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
-                >
-                  <ChevronRight className="h-5 w-5" />
-                </button>
-                <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
-                  <Camera className="inline h-4 w-4 mr-1" />
-                  {currentImageIndex + 1} / {spaceData.images.length}
-                </div>
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentImageIndex(0)}
+              className="absolute bottom-3 right-3 px-4 py-2 rounded-xl bg-white/95 text-foreground text-sm font-medium shadow-md hover:bg-white transition-colors"
+            >
+              See all photos
+            </button>
+          </div>
+        </div>
 
-                {/* Action Buttons */}
-                <div className="absolute top-4 right-4 flex space-x-2">
-                  <Button 
-                    size="sm" 
-                    variant="secondary" 
-                    className="bg-white/90 hover:bg-white"
-                    onClick={() => {
-                      if (navigator.share) {
-                        navigator.share({
-                          title: spaceData.name,
-                          text: spaceData.description,
-                          url: window.location.href,
-                        }).catch(() => {
-                          // Fallback to copy
-                          navigator.clipboard.writeText(window.location.href)
-                          toast.success("Link copied to clipboard!")
-                        })
-                      } else {
-                        navigator.clipboard.writeText(window.location.href)
-                        toast.success("Link copied to clipboard!")
-                      }
-                    }}
+        <div className="grid lg:grid-cols-3 gap-10">
+          {/* Main content */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Host + Key features */}
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
+              <div>
+                <h2 className="text-xl font-semibold mb-2">
+                  Entire suite hosted by{" "}
+                  <Link
+                    href={`/host/${spaceData.host.id}`}
+                    className="text-primary hover:underline"
                   >
-                    <Share className="h-4 w-4 mr-1" />
-                    Share
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="secondary" 
-                    className="bg-white/90 hover:bg-white"
-                    onClick={() => {
-                      // TODO: Implement favorite/save functionality
-                      toast.success("Space saved to favorites!")
-                    }}
-                  >
-                    <Heart className="h-4 w-4" />
-                  </Button>
-                </div>
+                    {spaceData.host.name}
+                  </Link>
+                </h2>
+                <p className="text-muted-foreground mb-3">
+                  Up to {spaceData.capacity} professionals •{" "}
+                  {spaceData.meetingRooms} Meeting Rooms •{" "}
+                  {spaceData.sqft.toLocaleString()} sq ft
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="rounded-xl"
+                  onClick={() => setShowContactModal(true)}
+                >
+                  <Mail className="h-4 w-4 mr-2" />
+                  Contact host
+                </Button>
               </div>
-              <div className="flex space-x-2 mt-4 overflow-x-auto">
-                {spaceData.images.map((image, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentImageIndex(index)}
-                    className={`flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-colors ${
-                      index === currentImageIndex ? "border-primary" : "border-transparent"
+              <Link href={`/host/${spaceData.host.id}`} className="shrink-0">
+                <Avatar className="h-14 w-14 hover:ring-2 hover:ring-primary/30 transition-all cursor-pointer">
+                  <AvatarImage src={spaceData.host.avatar} />
+                <AvatarFallback>
+                  {spaceData.host.name.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              </Link>
+            </div>
+
+            <div className="space-y-4">
+              {spaceData.keyFeatures.map((f, idx) => (
+                <div key={idx} className="flex gap-4">
+                  <div className="shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <f.icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-0.5">
+                      {f.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">{f.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* About this space */}
+            <div className="border-t border-border pt-8">
+              <h2 className="text-xl font-semibold mb-4">About this space</h2>
+              <div className="space-y-4 text-muted-foreground leading-relaxed">
+                <p>
+                  {showMoreDescription
+                    ? spaceData.description
+                    : spaceData.description.slice(0, 280) + "..."}
+                </p>
+                <button
+                  onClick={() => setShowMoreDescription(!showMoreDescription)}
+                  className="flex items-center gap-1 text-primary font-medium hover:underline"
+                >
+                  {showMoreDescription ? "Show less" : "Show more"}
+                  <ChevronRight
+                    className={`h-4 w-4 transition-transform ${
+                      showMoreDescription ? "rotate-90" : ""
                     }`}
-                  >
-                    <img
-                      src={image || "/placeholder.svg"}
-                      alt={`Thumbnail ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
-                ))}
+                  />
+                </button>
               </div>
             </div>
 
-            {/* Space Info */}
-            <div>
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h1 className="text-3xl font-bold text-foreground mb-2">{spaceData.name}</h1>
-                  <div className="flex items-center space-x-4 text-muted-foreground">
-                    <span className="flex items-center">
-                      <MapPin className="h-4 w-4 mr-1" />
-                      {spaceData.location}
-                    </span>
-                    <span className="flex items-center">
-                      <Star className="h-4 w-4 mr-1 fill-current text-yellow-500" />
-                      {spaceData.rating} ({spaceData.reviewCount} reviews)
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <p className="text-muted-foreground text-lg leading-relaxed">{spaceData.description}</p>
-            </div>
-
-            {/* Space Details */}
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-4">Space Details</h3>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">Meeting Rooms</span>
-                      <span className="font-medium">{spaceData.spaces.meetingRooms}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">Office Spaces</span>
-                      <span className="font-medium">{spaceData.spaces.officeSpaces}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">Available Desks</span>
-                      <span className="font-medium">{spaceData.spaces.desks}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">Total Capacity</span>
-                      <span className="font-medium">{spaceData.spaces.capacity} people</span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Amenities */}
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-semibold">Amenities</h3>
-                  <Button
-                    variant="ghost"
-                    onClick={() => setShowAllAmenities(!showAllAmenities)}
-                    className="text-primary"
-                  >
-                    {showAllAmenities ? "Show less" : "Show all"}
-                    <ChevronDown
-                      className={`ml-1 h-4 w-4 transition-transform ${showAllAmenities ? "rotate-180" : ""}`}
-                    />
-                  </Button>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-4">
-                  {spaceData.amenities.slice(0, showAllAmenities ? undefined : 6).map((amenity, index) => (
-                    <div key={index} className="flex items-center space-x-3">
-                      <amenity.icon className="h-5 w-5 text-primary" />
-                      <span className="text-foreground">{amenity.label}</span>
+            {/* What this space offers */}
+            <div className="border-t border-border pt-8">
+              <h2 className="text-xl font-semibold mb-6">
+                What this space offers
+              </h2>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {spaceData.amenities
+                  .slice(0, showAllAmenities ? undefined : 8)
+                  .map((a, idx) => (
+                    <div key={idx} className="flex items-center gap-3">
+                      <a.icon className="h-5 w-5 text-primary shrink-0" />
+                      <span className="text-foreground">{a.label}</span>
                     </div>
                   ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Hours */}
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-4">Hours</h3>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Monday - Friday</span>
-                    <span className="font-medium">{spaceData.hours.weekdays}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Saturday - Sunday</span>
-                    <span className="font-medium">{spaceData.hours.weekends}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+              </div>
+              <Button
+                variant="outline"
+                className="mt-4 rounded-xl border-border/60"
+                onClick={() => setShowAllAmenities(!showAllAmenities)}
+              >
+                {showAllAmenities
+                  ? "Show less"
+                  : `Show all ${spaceData.totalAmenitiesCount} amenities`}
+              </Button>
+            </div>
 
             {/* Reviews */}
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-semibold">Reviews</h3>
-                  <div className="flex items-center space-x-2">
-                    <Star className="h-5 w-5 fill-current text-yellow-500" />
-                    <span className="font-semibold">{spaceData.rating}</span>
-                    <span className="text-muted-foreground">({spaceData.reviewCount} reviews)</span>
-                  </div>
-                </div>
-
-                <div className="space-y-6">
-                  {spaceData.reviews.map((review) => (
-                    <div key={review.id} className="flex space-x-4">
-                      <Avatar>
-                        <AvatarImage src={review.avatar || "/placeholder.svg"} />
-                        <AvatarFallback>
-                          {review.author
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <span className="font-medium">{review.author}</span>
-                          <div className="flex">
-                            {[...Array(5)].map((_, i) => (
-                              <Star
-                                key={i}
-                                className={`h-4 w-4 ${i < review.rating ? "fill-current text-yellow-500" : "text-gray-300"}`}
-                              />
-                            ))}
-                          </div>
-                          <span className="text-sm text-muted-foreground">{review.date}</span>
-                        </div>
-                        <p className="text-muted-foreground">{review.comment}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <Button 
-                  variant="outline" 
-                  className="w-full mt-6 bg-transparent"
-                  onClick={() => {
-                    // TODO: Navigate to full reviews page or expand reviews
-                    toast.info("Showing all reviews...")
-                  }}
-                >
-                  Show all reviews
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Booking Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-24 space-y-6">
-              {/* Pricing Card */}
-              <Card>
-                <CardContent className="p-6">
-                  <div className="text-center mb-6">
-                    <div className="text-3xl font-bold text-foreground">₦{spaceData.price * 1000}</div>
-                    <div className="text-muted-foreground">{spaceData.priceUnit}</div>
-                  </div>
-
-                  <Button
-                    onClick={() => setShowBookingCalendar(true)}
-                    className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground text-lg mb-4"
-                  >
-                    <Calendar className="h-5 w-5 mr-2" />
-                    Select Date & Time
-                  </Button>
-
-                  <div className="text-center text-sm text-muted-foreground">Instant booking available</div>
-                </CardContent>
-              </Card>
-
-              {/* Calendar Integration */}
-              {lastBooking && (
-                <Card>
-                  <CardContent className="p-6">
-                    <h3 className="text-lg font-semibold mb-4">Add to Calendar</h3>
-                    <div className="space-y-2">
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start"
-                        onClick={() => handleAddToCalendar("google")}
-                      >
-                        <Calendar className="h-4 w-4 mr-2" />
-                        Add to Google Calendar
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start"
-                        onClick={() => handleAddToCalendar("outlook")}
-                      >
-                        <Calendar className="h-4 w-4 mr-2" />
-                        Add to Outlook Calendar
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start"
-                        onClick={() => handleAddToCalendar("ics")}
-                      >
-                        <Download className="h-4 w-4 mr-2" />
-                        Download .ics File
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Host Info */}
-              <Card>
-                <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold mb-4">Hosted by {spaceData.host.name}</h3>
-                  <div className="flex items-center space-x-4 mb-4">
-                    <Avatar className="h-12 w-12">
-                      <AvatarImage src={spaceData.host.avatar || "/placeholder.svg"} />
+            <div className="border-t border-border pt-8">
+              <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
+                <Star className="h-5 w-5 fill-primary text-primary" />
+                {spaceData.rating} • {spaceData.reviewCount} reviews
+              </h2>
+              <div className="space-y-8">
+                {spaceData.reviews.map((r) => (
+                  <div key={r.id} className="flex gap-4">
+                    <Avatar className="h-12 w-12 shrink-0">
+                      <AvatarImage src={r.avatar} />
                       <AvatarFallback>
-                        {spaceData.host.name
+                        {r.author
                           .split(" ")
                           .map((n) => n[0])
                           .join("")}
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <div className="flex items-center space-x-2">
-                        <Star className="h-4 w-4 fill-current text-yellow-500" />
-                        <span className="font-medium">{spaceData.host.rating}</span>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-semibold">{r.author}</span>
+                        <span className="text-muted-foreground">
+                          {r.location} • {r.date}
+                        </span>
                       </div>
-                      <div className="text-sm text-muted-foreground">Joined in {spaceData.host.joinedDate}</div>
+                      <div className="flex gap-0.5 mb-2">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`h-4 w-4 ${
+                              i < r.rating
+                                ? "fill-primary text-primary"
+                                : "text-muted-foreground/30"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <p className="text-muted-foreground">{r.comment}</p>
                     </div>
                   </div>
+                ))}
+              </div>
+              <Button
+                variant="outline"
+                className="mt-6 rounded-xl border-border/60"
+                onClick={() => toast.info("Loading all reviews...")}
+              >
+                Show all reviews
+              </Button>
+            </div>
 
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center space-x-2">
-                      <Clock className="h-4 w-4 text-muted-foreground" />
-                      <span>Response time: {spaceData.host.responseTime}</span>
-                    </div>
+            {/* Where you'll be */}
+            <div className="border-t border-border pt-8">
+              <h2 className="text-xl font-semibold mb-4">Where you&apos;ll be</h2>
+              <div className="aspect-video rounded-2xl overflow-hidden bg-muted border border-border/60">
+                <div className="w-full h-full flex items-center justify-center">
+                  <div className="text-center">
+                    <MapPin className="h-12 w-12 text-primary mx-auto mb-3" />
+                    <p className="font-medium text-foreground">
+                      {spaceData.area}, {spaceData.city}
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {spaceData.mapDescription}
+                    </p>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-                  <Button 
-                    variant="outline" 
-                    className="w-full mt-4 bg-transparent"
-                    onClick={handleContactHost}
-                  >
-                    <Mail className="h-4 w-4 mr-2" />
-                    Contact Host
-                  </Button>
-                </CardContent>
-              </Card>
+          {/* Booking Card - Sidebar */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-24 rounded-2xl border border-border/60 bg-white shadow-soft p-6 space-y-6">
+              <div className="flex items-baseline justify-between gap-2">
+                <span className="text-2xl font-bold text-foreground">
+                  ₦{spaceData.price.toLocaleString()}
+                </span>
+                <span className="text-muted-foreground">/ day</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Star className="h-4 w-4 fill-primary text-primary" />
+                <span className="font-medium">{spaceData.rating}</span>
+                <span className="text-muted-foreground">
+                  • {spaceData.reviewCount} reviews
+                </span>
+              </div>
 
-              {/* Map */}
-              <Card>
-                <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold mb-4">Location</h3>
-                  <div className="h-48 bg-muted rounded-lg flex items-center justify-center mb-4">
-                    <div className="text-center">
-                      <MapPin className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                      <p className="text-sm text-muted-foreground">Interactive map</p>
-                    </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground block mb-1.5">
+                    Check in
+                  </label>
+                  <Input
+                    type="date"
+                    value={checkIn}
+                    onChange={(e) => setCheckIn(e.target.value)}
+                    className="rounded-xl"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground block mb-1.5">
+                    Check out
+                  </label>
+                  <Input
+                    type="date"
+                    value={checkOut}
+                    onChange={(e) => setCheckOut(e.target.value)}
+                    className="rounded-xl"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground block mb-1.5">
+                  Plan type
+                </label>
+                <Select value={planType} onValueChange={setPlanType}>
+                  <SelectTrigger className="rounded-xl">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {spaceData.planTypes.map((p) => (
+                      <SelectItem key={p.value} value={p.value}>
+                        {p.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Button
+                onClick={handleBookNow}
+                className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-base font-semibold shadow-md shadow-primary/20"
+              >
+                Book Now
+              </Button>
+              <p className="text-center text-sm text-muted-foreground">
+                You won&apos;t be charged yet
+              </p>
+
+              <div className="space-y-3 pt-4 border-t border-border">
+                <div className="flex justify-between text-sm">
+                  <span>
+                    ₦{spaceData.price.toLocaleString()} x {nights} days
+                  </span>
+                  <span>₦{subtotal.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Service fee</span>
+                  <span>₦{serviceFee.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between font-semibold pt-2">
+                  <span>Total</span>
+                  <span>₦{total.toLocaleString()}</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
+                <span>Spayce Guarantee — Every booking is covered with our guarantee.</span>
+              </div>
+
+              <Link
+                href="#"
+                className="block text-center text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Report this listing
+              </Link>
+
+              {lastBooking && (
+                <div className="pt-4 border-t border-border space-y-2">
+                  <h3 className="text-sm font-semibold">Add to Calendar</h3>
+                  <div className="flex flex-col gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="justify-start rounded-xl"
+                      onClick={() => handleAddToCalendar("google")}
+                    >
+                      <Calendar className="h-4 w-4 mr-2" />
+                      Google Calendar
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="justify-start rounded-xl"
+                      onClick={() => handleAddToCalendar("outlook")}
+                    >
+                      <Calendar className="h-4 w-4 mr-2" />
+                      Outlook
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="justify-start rounded-xl"
+                      onClick={() => handleAddToCalendar("ics")}
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download .ics
+                    </Button>
                   </div>
-                  <p className="text-sm text-muted-foreground">{spaceData.location}</p>
-                </CardContent>
-              </Card>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
+
+      <Footer />
 
       {/* Booking Calendar Modal */}
       <AnimatePresence>
@@ -614,54 +782,44 @@ export default function SpaceDetailPage({ params }: { params: { id: string } }) 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
             onClick={(e) => {
-              if (e.target === e.currentTarget) {
-                setShowBookingCalendar(false)
-              }
+              if (e.target === e.currentTarget) setShowBookingCalendar(false)
             }}
           >
-            {/* Backdrop */}
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-
-            {/* Modal Content */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              className="relative z-50 w-full max-w-6xl max-h-[95vh] bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col"
+              className="relative z-50 w-full max-w-6xl max-h-[95vh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Modal Header */}
               <div className="sticky top-0 bg-white z-10 border-b border-border px-6 py-5 flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1 font-medium">
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
                     Booking
                   </p>
-                  <h2 className="text-2xl font-bold text-foreground">
-                    Select date & time for {spaceData.name}
+                  <h2 className="text-xl font-bold">
+                    Select date & time — {spaceData.name}
                   </h2>
                 </div>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setShowBookingCalendar(false)}
-                  className="h-9 w-9 rounded-full hover:bg-muted transition-colors"
-                  aria-label="Close modal"
+                  className="h-9 w-9 rounded-full"
+                  aria-label="Close"
                 >
                   <X className="h-5 w-5" />
                 </Button>
               </div>
-
-              {/* Modal Body - Scrollable */}
-              <div className="overflow-y-auto flex-1 px-6 py-6">
+              <div className="overflow-y-auto flex-1 p-6">
                 <BookingCalendar
                   spaceId={params.id}
-                  price={spaceData.price * 1000}
+                  price={spaceData.price}
                   priceUnit={spaceData.priceUnit}
-                  instantBooking={true}
+                  instantBooking
                   onBookingComplete={handleBookingComplete}
                   availableHours={[
                     "9:00 AM",
@@ -688,33 +846,25 @@ export default function SpaceDetailPage({ params }: { params: { id: string } }) 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
             onClick={(e) => {
-              if (e.target === e.currentTarget) {
-                setShowContactModal(false)
-              }
+              if (e.target === e.currentTarget) setShowContactModal(false)
             }}
           >
-            {/* Backdrop */}
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-
-            {/* Modal Content */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              className="relative z-50 w-full max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden"
+              className="relative z-50 w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Modal Header */}
               <div className="px-6 py-5 border-b border-border flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1 font-medium">
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
                     Contact
                   </p>
-                  <h2 className="text-2xl font-bold text-foreground">
+                  <h2 className="text-xl font-bold">
                     Message {spaceData.host.name}
                   </h2>
                 </div>
@@ -722,70 +872,57 @@ export default function SpaceDetailPage({ params }: { params: { id: string } }) 
                   variant="ghost"
                   size="icon"
                   onClick={() => setShowContactModal(false)}
-                  className="h-9 w-9 rounded-full hover:bg-muted transition-colors"
-                  aria-label="Close modal"
+                  className="h-9 w-9 rounded-full"
+                  aria-label="Close"
                 >
                   <X className="h-5 w-5" />
                 </Button>
               </div>
-
-              {/* Modal Body */}
               <div className="p-6 space-y-6">
-                <div className="flex items-center space-x-4 pb-4 border-b border-border">
+                <div className="flex items-center gap-4 pb-4 border-b border-border">
                   <Avatar className="h-12 w-12">
-                    <AvatarImage src={spaceData.host.avatar || "/placeholder.svg"} />
+                    <AvatarImage src={spaceData.host.avatar} />
                     <AvatarFallback>
-                      {spaceData.host.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
+                      {spaceData.host.name.slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div>
                     <p className="font-semibold">{spaceData.host.name}</p>
                     <p className="text-sm text-muted-foreground">
-                      Response time: {spaceData.host.responseTime}
+                      Response: {spaceData.host.responseTime}
                     </p>
                   </div>
                 </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="message">Your Message</Label>
                   <Textarea
                     id="message"
-                    placeholder="Ask about availability, amenities, or any questions you have about this space..."
+                    placeholder="Ask about availability, amenities..."
                     value={contactMessage}
                     onChange={(e) => setContactMessage(e.target.value)}
-                    rows={6}
-                    className="resize-none"
+                    rows={5}
+                    className="resize-none rounded-xl"
                   />
-                  <p className="text-xs text-muted-foreground">
-                    {contactMessage.length} characters
-                  </p>
                 </div>
-
-                <div className="flex gap-3 pt-2">
+                <div className="flex gap-3">
                   <Button
                     variant="outline"
                     onClick={() => setShowContactModal(false)}
-                    className="flex-1"
+                    className="flex-1 rounded-xl"
                   >
                     Cancel
                   </Button>
                   <Button
                     onClick={handleSendMessage}
                     disabled={messageMutation.isPending}
-                    className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
+                    className="flex-1 rounded-xl bg-primary hover:bg-primary/90"
                   >
                     {messageMutation.isPending ? (
-                      <>
-                        <span className="animate-spin mr-2">⏳</span>
-                        Sending...
-                      </>
+                      "Sending..."
                     ) : (
                       <>
                         <Send className="h-4 w-4 mr-2" />
-                        Send Message
+                        Send
                       </>
                     )}
                   </Button>
