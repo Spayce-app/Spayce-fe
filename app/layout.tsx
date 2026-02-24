@@ -47,6 +47,10 @@ export const metadata: Metadata = {
     description: "Nigeria's workspace marketplace. Instant booking across Lagos.",
   },
   robots: { index: true, follow: true },
+  icons: {
+    icon: "/spaycelogo.png",
+    apple: "/spaycelogo.png",
+  },
 }
 
 export default function RootLayout({
@@ -61,7 +65,7 @@ export default function RootLayout({
           <Suspense fallback={
             <div className="flex items-center justify-center h-screen w-screen bg-background">
               <div className="flex flex-col items-center gap-4">
-                <img src="/sapaycelogo.png" alt="Spayce" className="h-24 w-24 animate-pulse" />
+                <img src="/spaycelogo.png" alt="Spayce" className="h-24 w-24 animate-pulse" />
                 <span className="text-lg font-semibold text-primary">Spayce</span>
               </div>
             </div>

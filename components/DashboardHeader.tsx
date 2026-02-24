@@ -2,7 +2,6 @@
 
 import { Bell, Search, HelpCircle } from "lucide-react"
 import { Input } from "@/components/ui/input"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import Link from "next/link"
 
 interface DashboardHeaderProps {
@@ -74,19 +73,6 @@ export default function DashboardHeader({
           )}
             </>
           )}
-
-          <div className="flex items-center gap-3 pl-2 border-l border-gray-200">
-            <Avatar className="h-10 w-10">
-              <AvatarImage src="/placeholder.svg?height=40&width=40" />
-              <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
-                CB
-              </AvatarFallback>
-            </Avatar>
-            <div className="hidden sm:block">
-              <p className="text-sm font-semibold text-foreground">Chidi Benson</p>
-              <p className="text-xs text-primary font-medium">Verified Host</p>
-            </div>
-          </div>
         </div>
       </div>
     </header>

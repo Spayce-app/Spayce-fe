@@ -25,21 +25,24 @@ export default function HomePage() {
   const router = useRouter()
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation */}
       <Navbar />
-
-      {/* Hero Section */}
       <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
         <motion.div
           animate={{ scale: 1 }}
           initial={{ scale: 1.08 }}
           transition={{ duration: 4, ease: [0.22, 1, 0.36, 1] }}
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url('heroimg4.jpg')`,
-          }}
+          className="absolute inset-0"
         >
-          <div className="absolute inset-0 hero-overlay"></div>
+          <Image
+            src="/heroimg4.jpg"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+            quality={85}
+          />
+          <div className="absolute inset-0 hero-overlay" aria-hidden />
         </motion.div>
 
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -51,7 +54,7 @@ export default function HomePage() {
               className="text-3xl md:text-6xl w-full md:leading-[1.15] font-bold text-white mb-6 text-balance drop-shadow-lg"
             >
               Find Your Perfect Workspace{" "}
-              <span className="relative inline-block text-accent w-[8ch]">
+              <span className="relative inline-block text-orange-400 w-[8ch]">
                 <AnimatePresence mode="wait">
                   <motion.span
                     key={rotatingWords[index]}
@@ -206,7 +209,7 @@ export default function HomePage() {
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.5, delay: idx * 0.08, ease: [0.22, 1, 0.36, 1] }}
               >
-              <Card onClick={() => router.push(`/spaces/${i}`)} className="group hover:shadow-xl hover:shadow-primary/5 hover:border-primary/20 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer border border-transparent bg-white">
+              <Card onClick={() => router.push(`/spaces/${i}`)} className="group hover:border-primary/20 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer border border-transparent bg-white">
                 <div className="aspect-video relative overflow-hidden rounded-t-2xl">
                   <Image
                     src={`/heroimg${i}.jpg`}
@@ -256,6 +259,47 @@ export default function HomePage() {
               </Button>
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* List your space CTA */}
+      <section className="py-16 md:py-20 bg-[#F4F5F7]">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            className="rounded-2xl overflow-hidden bg-primary shadow-soft text-center"
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="py-12 md:py-16 px-4 sm:px-6">
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-3 tracking-tight">
+                Have an empty workspace?
+              </h2>
+              <p className="text-white/95 text-base md:text-lg max-w-xl mx-auto mb-8">
+                Join thousands of property owners in Nigeria earning passive income by listing their offices on Spayce.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Link href="/list-space">
+                  <Button
+                    size="lg"
+                    className="rounded-xl bg-orange-400 hover:bg-orange-500 text-white font-semibold shadow-md transition-all"
+                  >
+                    Start Listing Now
+                  </Button>
+                </Link>
+                <Link href="/how-it-works">
+                  <Button
+                    variant="secondary"
+                    size="lg"
+                    className="rounded-xl bg-white/20 hover:bg-white/30 text-white border-0 font-medium transition-all"
+                  >
+                    Learn How it Works
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
       <Footer />

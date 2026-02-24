@@ -82,7 +82,7 @@ export default function ResetPasswordPage() {
   const getStrengthColor = () => {
     if (passwordStrength === 0) return "bg-muted"
     if (passwordStrength === 1) return "bg-red-500"
-    if (passwordStrength === 2) return "bg-yellow-500"
+    if (passwordStrength === 2) return "bg-orange-400"
     if (passwordStrength === 3) return "bg-blue-500"
     return "bg-green-500"
   }
@@ -104,8 +104,8 @@ export default function ResetPasswordPage() {
           className="flex justify-center absolute top-5 left-10 mb-8"
         >
           <Link href="/" className="flex relative items-center space-x-2">
-            <div className="w-22 h-22 relative bg-transparent rounded-lg flex items-center justify-center">
-              <Image src="/sapaycelogo.png" alt="Spayce Logo" fill priority blurDataURL="data:image/svg+xml;base64,..." />
+            <div className="w-14 h-14 relative bg-transparent rounded-lg flex items-center justify-center">
+              <Image src="/spaycelogo.png" alt="Spayce Logo" fill priority blurDataURL="data:image/svg+xml;base64,..." />
             </div>
             <span className="text-2xl absolute top-7 -right-14 font-bold text-primary">spayce</span>
           </Link>

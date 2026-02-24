@@ -34,13 +34,13 @@ export default function DashboardSidebar() {
       {/* Logo Section */}
       <div className="p-6 border-b border-gray-100/80">
         <Link href="/" className="flex items-center gap-3 group" aria-label="Spayce - Home">
-          <div className="relative w-10 h-10 rounded-xl bg-primary flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+          <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0">
             <Image
-              src="/sapaycelogo.png"
+              src="/spaycelogo.png"
               alt=""
-              width={40}
-              height={40}
-              className="object-contain p-1.5"
+              width={48}
+              height={48}
+              className="object-contain"
             />
           </div>
           <div>
@@ -88,7 +88,7 @@ export default function DashboardSidebar() {
         <div className="rounded-2xl bg-gray-50/80 p-4 space-y-4 border border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10 rounded-full border-2 border-white shadow-sm">
-              <AvatarFallback className="bg-amber-100 text-amber-800 text-sm font-semibold">
+              <AvatarFallback className="bg-orange-100 text-orange-400 text-sm font-semibold">
                 AM
               </AvatarFallback>
             </Avatar>

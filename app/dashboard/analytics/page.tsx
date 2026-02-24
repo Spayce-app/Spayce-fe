@@ -87,7 +87,7 @@ const revenueData = [
 
 const trafficSources = [
   { name: "Direct Search", value: 45, color: "bg-primary" },
-  { name: "Social Media", value: 28, color: "bg-amber-500" },
+  { name: "Social Media", value: 28, color: "bg-orange-400" },
   { name: "Referrals", value: 18, color: "bg-gray-300" },
   { name: "Other", value: 9, color: "bg-gray-300" },
 ]

@@ -53,9 +53,9 @@ export default function Page() {
           className="flex justify-center absolute top-4 left-10 mb-8"
         >
           <Link href="/" className="flex relative items-center space-x-2">
-            <div className="w-22 h-22 relative bg-transparent rounded-lg flex items-center justify-center">
+            <div className="w-14 h-14 relative bg-transparent rounded-lg flex items-center justify-center">
               <Image
-                src="/sapaycelogo.png"
+                src="/spaycelogo.png"
                 alt="Spayce Logo"
                 fill
                 priority={true}

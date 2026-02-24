@@ -77,7 +77,7 @@ const bookings = [
 function StatusBadge({ status }: { status: (typeof bookings)[0]["status"] }) {
   const config = {
     Confirmed: { dot: "bg-green-500", pill: "bg-green-50 text-green-700" },
-    Pending: { dot: "bg-amber-500", pill: "bg-amber-50 text-amber-700" },
+    Pending: { dot: "bg-orange-400", pill: "bg-orange-50 text-orange-700" },
     Completed: { dot: "bg-blue-400", pill: "bg-blue-50 text-blue-700" },
     Cancelled: { dot: "bg-red-500", pill: "bg-red-50 text-red-700" },
   }[status]
@@ -116,7 +116,7 @@ export default function BookingsPage() {
         <div className="p-6 md:p-8 max-w-[1440px] mx-auto space-y-6">
           {/* Metric Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            <Card className="bg-white border-0 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.08),0_4px_16px_-4px_rgba(0,0,0,0.06)] rounded-2xl overflow-hidden transition-shadow hover:shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1),0_8px_24px_-4px_rgba(0,0,0,0.08)]">
+            <Card className="bg-white border-0 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.08),0_4px_16px_-4px_rgba(0,0,0,0.06)] rounded-2xl overflow-hidden">
               <CardContent className="p-5">
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Total Bookings
@@ -129,7 +129,7 @@ export default function BookingsPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-white border-0 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.08),0_4px_16px_-4px_rgba(0,0,0,0.06)] rounded-2xl overflow-hidden transition-shadow hover:shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1),0_8px_24px_-4px_rgba(0,0,0,0.08)]">
+            <Card className="bg-white border-0 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.08),0_4px_16px_-4px_rgba(0,0,0,0.06)] rounded-2xl overflow-hidden">
               <CardContent className="p-5">
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Active Today
@@ -139,7 +139,7 @@ export default function BookingsPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-white border-0 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.08),0_4px_16px_-4px_rgba(0,0,0,0.06)] rounded-2xl overflow-hidden transition-shadow hover:shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1),0_8px_24px_-4px_rgba(0,0,0,0.08)]">
+            <Card className="bg-white border-0 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.08),0_4px_16px_-4px_rgba(0,0,0,0.06)] rounded-2xl overflow-hidden">
               <CardContent className="p-5">
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Revenue (MTD)
@@ -152,7 +152,7 @@ export default function BookingsPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-white border-0 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.08),0_4px_16px_-4px_rgba(0,0,0,0.06)] rounded-2xl overflow-hidden transition-shadow hover:shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1),0_8px_24px_-4px_rgba(0,0,0,0.08)]">
+            <Card className="bg-white border-0 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.08),0_4px_16px_-4px_rgba(0,0,0,0.06)] rounded-2xl overflow-hidden">
               <CardContent className="p-5">
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Avg. Rating

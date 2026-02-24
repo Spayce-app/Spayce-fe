@@ -56,8 +56,8 @@ const metricCards = [
     value: "4.8/5.0",
     tag: "New High",
     icon: Star,
-    iconBg: "bg-amber-100",
-    iconColor: "text-amber-600",
+    iconBg: "bg-orange-100",
+    iconColor: "text-orange-400",
   },
 ]
 
@@ -327,7 +327,7 @@ export default function OverviewPage() {
                       <span className="text-xs text-gray-600">REVENUE</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="w-3 h-0.5 border-t-2 border-dashed border-orange-500" />
+                      <div className="w-3 h-0.5 border-t-2 border-dashed border-orange-400" />
                       <span className="text-xs text-gray-600">TRAFFIC</span>
                     </div>
                   </div>

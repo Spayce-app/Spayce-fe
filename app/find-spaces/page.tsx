@@ -182,7 +182,7 @@ export default function FindSpacesPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="rounded-2xl bg-white shadow-soft border border-border/40 p-6 space-y-8 sticky top-24">
+            <div className="rounded-2xl bg-white shadow-soft border border-muted-foreground/20 p-6 space-y-8 sticky top-24">
               {/* SPACE TYPE */}
               <div>
                 <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
@@ -294,7 +294,7 @@ export default function FindSpacesPage() {
                   whileHover={{ y: -4, transition: { duration: 0.2 } }}
                 >
                   <Link href={`/spaces/${space.id}`}>
-                    <Card className="group overflow-hidden border-0 bg-white rounded-2xl shadow-soft hover:shadow-soft-hover transition-all duration-300 h-full flex flex-col">
+                    <Card className="group overflow-hidden border-0 bg-white rounded-2xl shadow-soft h-full flex flex-col">
                       <div className="relative aspect-[4/3] overflow-hidden">
                         <Image
                           src={space.image || "/placeholder.svg"}
@@ -414,6 +414,7 @@ export default function FindSpacesPage() {
             </motion.div>
           </div>
         </div>
+
 
         {/* Show Map floating button (mobile) */}
         <motion.div

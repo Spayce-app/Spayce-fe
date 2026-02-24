@@ -309,7 +309,7 @@ export default function HostProfilePage({
                     }}
                   >
                     <Link href={`/spaces/${space.id}`}>
-                      <div className="group rounded-2xl bg-white shadow-soft border border-border/40 overflow-hidden hover:shadow-soft-hover transition-all duration-300">
+                      <div className="group rounded-2xl bg-white shadow-soft border border-border/40 overflow-hidden">
                         <div className="relative aspect-[4/3] overflow-hidden">
                           <Image
                             src={space.image || "/placeholder.svg"}

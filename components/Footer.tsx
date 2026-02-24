@@ -11,8 +11,8 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-12 md:gap-8">
           <div className="md:col-span-1">
             <Link href="/" className="flex items-center gap-2.5 mb-5 group">
-              <div className="relative w-9 h-9 rounded-xl overflow-hidden transition-transform group-hover:scale-105">
-                <Image src="/sapaycelogo.png" alt="Spayce" fill className="object-contain" />
+              <div className="relative w-12 h-12 rounded-xl overflow-hidden transition-transform group-hover:scale-105">
+                <Image src="/spaycelogo.png" alt="Spayce" fill className="object-contain" />
               </div>
               <span className="text-xl font-bold tracking-tight">Spayce</span>
             </Link>
@@ -30,8 +30,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/pricing" className="hover:text-orange-400 transition-colors duration-200">
-                  Pricing
+                <Link href="/saved" className="hover:text-orange-400 transition-colors duration-200">
+                  Saved Spaces
                 </Link>
               </li>
               <li>

@@ -10,7 +10,7 @@ import Image from "next/image";
 
 const navLinks = [
   { label: "Find Spaces", href: "/find-spaces" },
-  { label: "Pricing", href: "/pricing" },
+  { label: "Saved", href: "/saved" },
   { label: "List Your Space", href: "/list-space" },
 ];
 
@@ -25,12 +25,12 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 group" aria-label="Spayce - Home">
-            <div className="relative w-9 h-9 shrink-0 rounded-xl overflow-hidden transition-all duration-200 group-hover:scale-105 group-hover:shadow-md">
+            <div className="relative w-12 h-12 shrink-0 rounded-xl overflow-hidden transition-all duration-200 group-hover:scale-105 group-hover:shadow-md">
               <Image
-                src="/sapaycelogo.png"
+                src="/spaycelogo.png"
                 alt=""
-                width={36}
-                height={36}
+                width={48}
+                height={48}
                 priority
                 className="object-contain"
               />
