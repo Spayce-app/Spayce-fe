@@ -354,31 +354,31 @@ export default function ListSpacePage() {
     mutation.mutate(payload)
   }
   return (
-    <div className="min-h-screen bg-[#F4F5F7]">
+    <div className="min-h-screen w-full overflow-x-hidden bg-[#F4F5F7]">
       <Navbar />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-10">
         {/* Progress: STEP X OF 5 + progress bar + title */}
-        <div className="mb-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-2">
-            <p className="text-sm font-semibold text-primary">
+        <div className="mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 mb-2">
+            <p className="text-xs sm:text-sm font-semibold text-primary">
               STEP {currentStep} OF {STEPS.length}
             </p>
-            <div className="flex items-center gap-3 flex-1 sm:max-w-xs">
+            <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0 sm:max-w-xs">
               <Progress value={progress} className="h-2 flex-1 rounded-full" />
               <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">
                 {Math.round(progress)}% Complete
               </span>
             </div>
           </div>
-          <h1 className="text-xl font-bold text-foreground tracking-tight">
+          <h1 className="text-lg sm:text-xl font-bold text-foreground tracking-tight">
             {currentStep === 1 ? "Account Setup" : STEPS[currentStep - 1].title}
           </h1>
         </div>
 
         <div>
         <Card className="border border-border/40 shadow-soft rounded-xl overflow-hidden">
-          <CardHeader className="pb-5 pt-8 px-8">
+          <CardHeader className="pb-5 pt-6 sm:pt-8 px-4 sm:px-6 md:px-8">
             <CardTitle className="text-lg font-bold">
               {STEPS[currentStep - 1].title}
             </CardTitle>
@@ -386,7 +386,7 @@ export default function ListSpacePage() {
               {STEPS[currentStep - 1].description}
             </p>
           </CardHeader>
-          <CardContent className="px-8 pb-8 pt-2 space-y-6">
+          <CardContent className="px-4 sm:px-6 md:px-8 pb-6 sm:pb-8 pt-2 space-y-6">
             {currentStep === 1 && (
               <div className="space-y-5">
                 <div className="space-y-2">

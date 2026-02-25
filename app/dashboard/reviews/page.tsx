@@ -95,8 +95,8 @@ export default function ReviewsPage() {
           </Badge>
         }
       />
-      <main className="flex-1 overflow-y-auto bg-[#F7F8FC]">
-        <div className="p-6 md:p-8 max-w-[1440px] mx-auto space-y-6">
+      <main className="flex-1 min-h-0 overflow-y-auto bg-[#F7F8FC]">
+        <div className="p-4 sm:p-6 md:p-8 max-w-[1440px] mx-auto space-y-6">
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <Card className="bg-white border-gray-100 shadow-sm rounded-lg">

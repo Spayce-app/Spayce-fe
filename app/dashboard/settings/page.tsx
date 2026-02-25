@@ -28,10 +28,10 @@ export default function SettingsPage() {
         title="Account Settings"
         showSearch={false}
       />
-      <main className="flex-1 overflow-y-auto bg-[#F7F8FC]">
-        <div className="p-6 md:p-8 max-w-[1440px] mx-auto">
+      <main className="flex-1 min-h-0 overflow-y-auto bg-[#F7F8FC]">
+        <div className="p-4 sm:p-6 md:p-8 max-w-[1440px] mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="h-auto p-0 bg-transparent border-b border-gray-200 rounded-none gap-6">
+            <TabsList className="h-auto p-0 bg-transparent border-b border-gray-200 rounded-none gap-4 sm:gap-6 flex overflow-x-auto">
               {settingTabs.map((tab) => (
                 <TabsTrigger
                   key={tab.value}

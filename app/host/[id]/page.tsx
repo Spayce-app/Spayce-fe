@@ -178,10 +178,10 @@ export default function HostProfilePage({
   const displayedCount = listings.length
 
   return (
-    <div className="min-h-screen bg-[#F4F5F7]">
+    <div className="min-h-screen w-full overflow-x-hidden bg-[#F4F5F7]">
       <Navbar />
 
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
         <div className="grid lg:grid-cols-3 gap-10">
           {/* Left column - Host info */}
           <div className="lg:col-span-1 space-y-6">

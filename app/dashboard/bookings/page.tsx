@@ -100,19 +100,19 @@ export default function BookingsPage() {
         description="Manage and track all your space reservations, verify payments, and handle check-ins from one central place."
         showSearch={false}
         customActions={
-          <div className="flex items-center gap-3">
-            <Button variant="outline" className="rounded-xl border-gray-200/80 shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
+            <Button variant="outline" size="sm" className="rounded-xl border-gray-200/80 shadow-sm hover:shadow-md transition-shadow sm:size-default">
               <Download className="h-4 w-4 mr-2" />
               Export PDF
             </Button>
-            <Button className="rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/25 transition-all">
+            <Button size="sm" className="rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-md shadow-primary/20 sm:size-default">
               <Plus className="h-4 w-4 mr-2" />
               New Manual Booking
             </Button>
           </div>
         }
       />
-      <main className="flex-1 overflow-y-auto bg-[#F7F8FC]">
+      <main className="flex-1 min-h-0 overflow-y-auto bg-[#F7F8FC]">
         <div className="p-6 md:p-8 max-w-[1440px] mx-auto space-y-6">
           {/* Metric Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -222,8 +222,81 @@ export default function BookingsPage() {
             </CardContent>
           </Card>
 
-          {/* Bookings - Card-based layout for flair */}
-          <div className="space-y-4">
+          {/* Bookings - Mobile cards */}
+          <div className="md:hidden space-y-3">
+            {bookings.map((booking) => (
+              <Card
+                key={booking.renterName + booking.spaceName}
+                className="bg-white border-0 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.08),0_4px_16px_-4px_rgba(0,0,0,0.06)] rounded-2xl overflow-hidden"
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center shrink-0 shadow-sm">
+                        <span className="text-xs font-semibold text-foreground">
+                          {booking.renterInitials}
+                        </span>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-medium text-foreground truncate">
+                          {booking.renterName}
+                        </p>
+                        <p className="text-sm text-muted-foreground truncate">
+                          {booking.spaceName}
+                        </p>
+                      </div>
+                    </div>
+                    <StatusBadge status={booking.status} />
+                  </div>
+                  <div className="mt-3 pt-3 border-t border-gray-100 grid grid-cols-2 gap-2 text-sm">
+                    <span className="text-muted-foreground">Date</span>
+                    <span className="text-right font-medium">{booking.dateTime}</span>
+                    <span className="text-muted-foreground">Duration</span>
+                    <span className="text-right">{booking.duration}</span>
+                    <span className="text-muted-foreground">Amount</span>
+                    <span className="text-right font-semibold text-foreground">{booking.amount}</span>
+                  </div>
+                  <div className="mt-3 flex gap-2">
+                    <Button variant="outline" size="sm" className="flex-1 rounded-xl">
+                      View
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-9 w-9 rounded-xl shrink-0"
+                      aria-label="More actions"
+                    >
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 pb-2">
+              <p className="text-sm text-muted-foreground order-2 sm:order-1">
+                Showing 1-4 of 24 results
+              </p>
+              <div className="flex items-center gap-2 order-1 sm:order-2">
+                <Button variant="outline" size="sm" className="rounded-xl" disabled>
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Prev
+                </Button>
+                <Button variant="default" size="sm" className="rounded-xl h-9 w-9 p-0">
+                  1
+                </Button>
+                <Button variant="outline" size="sm" className="h-9 w-9 p-0 rounded-xl">
+                  2
+                </Button>
+                <Button variant="outline" size="sm" className="rounded-xl">
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Bookings - Desktop table */}
+          <div className="hidden md:block space-y-4">
             <div className="bg-white border-0 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.08),0_4px_16px_-4px_rgba(0,0,0,0.06)] rounded-2xl overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -300,8 +373,7 @@ export default function BookingsPage() {
                 </tbody>
               </table>
             </div>
-{/* Pagination */}
-            <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100/80 bg-gray-50/40">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-6 py-4 border-t border-gray-100/80 bg-gray-50/40 rounded-b-2xl">
               <p className="text-sm text-muted-foreground">
                 Showing 1-4 of 24 results
               </p>

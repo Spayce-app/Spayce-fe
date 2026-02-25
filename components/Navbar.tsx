@@ -106,7 +106,7 @@ export default function Navbar() {
 
             {/* Sidebar */}
             <motion.div
-              className="fixed top-0 left-0 w-64 h-[100vh] bg-background z-50 shadow-2xl flex flex-col justify-between border-r border-gray-100"
+              className="fixed top-0 left-0 w-64 max-w-[85vw] h-[100dvh] bg-background z-50 shadow-2xl flex flex-col justify-between border-r border-gray-100 overflow-y-auto"
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}

@@ -8,7 +8,7 @@ export default function Footer() {
     <footer className="bg-orange-950 text-white py-16 md:py-20 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-orange-900/30 via-transparent to-transparent pointer-events-none" aria-hidden />
       <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-4 gap-12 md:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 md:gap-8">
           <div className="md:col-span-1">
             <Link href="/" className="flex items-center gap-2.5 mb-5 group">
               <div className="relative w-12 h-12 rounded-xl overflow-hidden transition-transform group-hover:scale-105">
@@ -75,7 +75,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-14 pt-8 border-t border-white/20 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="mt-10 sm:mt-14 pt-6 sm:pt-8 border-t border-white/20 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
           <p className="text-white/60 text-sm">© {new Date().getFullYear()} Spayce. All rights reserved.</p>
           <p className="text-white/60 text-sm">Lagos, Nigeria</p>
         </div>

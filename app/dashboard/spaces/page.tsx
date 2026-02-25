@@ -39,12 +39,12 @@ export default function SpacesPage() {
         description="Manage your listed spaces"
         showSearch={true}
       />
-      <main className="flex-1 overflow-y-auto bg-[#F7F8F9]">
-        <div className="p-8 max-w-[1440px] mx-auto">
-          <div className="flex items-center justify-between mb-6">
+      <main className="flex-1 min-h-0 overflow-y-auto bg-[#F7F8F9]">
+        <div className="p-4 sm:p-6 md:p-8 max-w-[1440px] mx-auto">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-6">
             <h2 className="text-lg font-semibold text-gray-900">Your Listings</h2>
-            <Link href="/list-space">
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+            <Link href="/list-space" className="w-full sm:w-auto">
+              <Button className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground">
                 <Plus className="h-4 w-4 mr-2" />
                 Add New Space
               </Button>

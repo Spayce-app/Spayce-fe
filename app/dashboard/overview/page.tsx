@@ -120,7 +120,7 @@ export default function OverviewPage() {
   return (
     <>
       <DashboardHeader showSearch={true} />
-      <main className="flex-1 overflow-y-auto bg-[#F7F8FC]">
+      <main className="flex-1 min-h-0 overflow-y-auto bg-[#F7F8FC]">
         <div className="p-6 md:p-8 max-w-[1440px] mx-auto space-y-10">
           {/* Key Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -167,8 +167,8 @@ export default function OverviewPage() {
             {/* Recent Bookings */}
             <div className="lg:col-span-2">
               <Card className="bg-white border-gray-100 shadow-sm rounded-xl">
-                <CardHeader className="flex flex-row items-center justify-between px-6 py-5">
-                  <CardTitle className="text-lg font-semibold">
+                <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-4 sm:px-6 py-4 sm:py-5">
+                  <CardTitle className="text-base sm:text-lg font-semibold">
                     Recent Bookings
                   </CardTitle>
                   <Link href="/dashboard/bookings">
@@ -181,8 +181,45 @@ export default function OverviewPage() {
                     </Button>
                   </Link>
                 </CardHeader>
-                <CardContent className="px-6 pb-6 pt-0">
-                  <div className="overflow-x-auto">
+                <CardContent className="px-4 sm:px-6 pb-6 pt-0">
+                  {/* Mobile: list of cards */}
+                  <div className="md:hidden space-y-3">
+                    {recentBookings.map((booking) => (
+                      <div
+                        key={booking.spaceName}
+                        className="flex items-center justify-between gap-3 py-3 border-b border-gray-50 last:border-0"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <Avatar className="h-9 w-9 shrink-0">
+                            <AvatarFallback className="text-xs bg-gray-100 text-gray-600">
+                              {booking.renterInitials}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="min-w-0">
+                            <p className="font-medium text-foreground text-sm truncate">
+                              {booking.spaceName}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {booking.renter} · {booking.date}
+                            </p>
+                          </div>
+                        </div>
+                        <Badge
+                          className={
+                            booking.status === "CONFIRMED"
+                              ? "bg-green-100 text-green-700 border-0 shrink-0"
+                              : booking.status === "PENDING"
+                                ? "bg-orange-100 text-orange-700 border-0 shrink-0"
+                                : "bg-gray-100 text-gray-600 border-0 shrink-0"
+                          }
+                        >
+                          {booking.status}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                  {/* Desktop: table */}
+                  <div className="hidden md:block overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="text-left text-muted-foreground font-medium border-b border-gray-100">
@@ -241,12 +278,12 @@ export default function OverviewPage() {
             {/* Performance Graph */}
             <div>
               <Card className="bg-white border-gray-100 shadow-sm rounded-xl h-full">
-                <CardHeader className="flex flex-row items-center justify-between px-6 py-5">
-                  <CardTitle className="text-lg font-semibold">
+                <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-4 sm:px-6 py-4 sm:py-5">
+                  <CardTitle className="text-base sm:text-lg font-semibold">
                     Performance
                   </CardTitle>
                   <Select defaultValue="7days">
-                    <SelectTrigger className="w-[130px] h-9 border-gray-200">
+                    <SelectTrigger className="w-full sm:w-[130px] h-9 border-gray-200">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -256,8 +293,8 @@ export default function OverviewPage() {
                     </SelectContent>
                   </Select>
                 </CardHeader>
-                <CardContent className="px-6 pb-6 pt-0">
-                  <div className="h-60">
+                <CardContent className="px-4 sm:px-6 pb-6 pt-0">
+                  <div className="h-52 sm:h-60">
                     <ResponsiveContainer width="100%" height="100%">
                       <AreaChart data={performanceData}>
                         <defs>

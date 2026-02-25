@@ -131,9 +131,9 @@ export default function FindSpacesPage() {
   })
 
   return (
-    <div className="min-h-screen bg-[#F4F5F7]">
+    <div className="min-h-screen w-full overflow-x-hidden bg-[#F4F5F7]">
       <Navbar />
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
         {/* Page header */}
         <motion.div
           className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8"
@@ -141,17 +141,17 @@ export default function FindSpacesPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground tracking-tight">
               Workspaces in Lagos
             </h1>
-            <p className="text-muted-foreground mt-1">
+            <p className="text-muted-foreground mt-1 text-sm sm:text-base">
               Showing 124 available spaces for today
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
             <Select defaultValue="popular">
-              <SelectTrigger className="w-[180px] h-10 rounded-xl border-border/60 bg-white shadow-soft">
+              <SelectTrigger className="w-full sm:w-[180px] h-10 rounded-xl border-border/60 bg-white shadow-soft">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -164,10 +164,10 @@ export default function FindSpacesPage() {
             </Select>
             <Button
               variant={showMap ? "default" : "outline"}
-              className="rounded-xl border-border/60"
+              className="rounded-xl border-border/60 w-full sm:w-auto"
               onClick={() => setShowMap(!showMap)}
             >
-              <Map className="h-4 w-4 mr-2" />
+              <Map className="h-4 w-4 mr-2 shrink-0" />
               Map View
             </Button>
           </div>
@@ -182,7 +182,7 @@ export default function FindSpacesPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="rounded-2xl bg-white shadow-soft border border-muted-foreground/20 p-6 space-y-8 sticky top-24">
+            <div className="rounded-2xl bg-white shadow-soft border border-muted-foreground/20 p-4 sm:p-6 space-y-6 sm:space-y-8 lg:sticky lg:top-24">
               {/* SPACE TYPE */}
               <div>
                 <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
@@ -280,7 +280,7 @@ export default function FindSpacesPage() {
 
           {/* Main content - workspace cards */}
           <div className="flex-1 min-w-0">
-            <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
               {mockSpaces.map((space, idx) => (
                 <motion.div
                   key={space.id}

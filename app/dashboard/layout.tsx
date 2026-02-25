@@ -1,4 +1,5 @@
-import DashboardSidebar from "@/components/DashboardSidebar"
+import { DashboardProvider } from "@/contexts/DashboardContext"
+import DashboardLayoutClient from "./DashboardLayoutClient"
 import { ReactNode } from "react"
 
 export default function DashboardLayout({
@@ -7,12 +8,9 @@ export default function DashboardLayout({
   children: ReactNode
 }) {
   return (
-    <div className="min-h-screen bg-[#F7F8F9] flex">
-      <DashboardSidebar />
-      <div className="flex-1 flex flex-col min-w-0">
-        {children}
-      </div>
-    </div>
+    <DashboardProvider>
+      <DashboardLayoutClient>{children}</DashboardLayoutClient>
+    </DashboardProvider>
   )
 }
 

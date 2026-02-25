@@ -18,15 +18,15 @@ export default function HomePage() {
   useEffect(() => {
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % rotatingWords.length);
-    }, 2500); // change word every 2.5s
+    }, 2500); 
     return () => clearInterval(interval);
   }, []);
 
   const router = useRouter()
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen w-full overflow-x-hidden bg-background">
       <Navbar />
-      <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[min(85vh,100dvh)] sm:min-h-[85vh] flex items-center justify-center overflow-hidden py-8 sm:py-0">
         <motion.div
           animate={{ scale: 1 }}
           initial={{ scale: 1.08 }}
@@ -45,7 +45,7 @@ export default function HomePage() {
           <div className="absolute inset-0 hero-overlay" aria-hidden />
         </motion.div>
 
-        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <section className="text-center py-0">
             <motion.h1
               initial={{ opacity: 0, y: 24 }}
@@ -82,24 +82,24 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="bg-white/98 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-xl shadow-black/10 max-w-6xl mx-auto border border-white/20"
+            className="bg-white/98 backdrop-blur-sm rounded-2xl p-4 sm:p-6 md:p-8 shadow-xl shadow-black/10 w-full max-w-6xl mx-auto border border-white/20"
           >
-            <div className="flex flex-col  md:flex-row gap-4">
-              <div className="flex-1  relative">
+            <div className="flex flex-col md:flex-row gap-3 sm:gap-4">
+              <div className="flex-1 min-w-0 relative">
                 <MapPin className="absolute  left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
                 <Input
                   placeholder="Search by city or workspace name..."
-                  className="pl-10 h-12 rounded-xl text-sm border-border focus:ring-primary transition-all"
+                  className="pl-10 h-12 rounded-xl text-sm border-border focus:ring-primary transition-all w-full"
                 />
               </div>
 
-              <div className="flex-1  relative">
+              <div className="flex-1 min-w-0 relative">
                 <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                <Input placeholder="Select date..." className="pl-10 h-12 rounded-xl text-sm border-border focus:ring-primary transition-all" />
+                <Input placeholder="Select date..." className="pl-10 h-12 rounded-xl text-sm border-border focus:ring-primary transition-all w-full" />
               </div>
 
-              <Link href="/find-spaces ">
-                <Button className="h-12 px-20 md:px-8 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground md:text-base shadow-md shadow-primary/20 transition-all">
+              <Link href="/find-spaces" className="w-full md:w-auto">
+                <Button className="h-12 w-full md:w-auto md:px-8 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-sm md:text-base shadow-md shadow-primary/20 transition-all">
                   <Search className="mr-2 h-5  w-5" />
                   Find Spaces
                 </Button>
@@ -109,11 +109,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="workspace-types" className="py-24 bg-[#F4F5F7] scroll-mt-20">
+      <section id="workspace-types" className="py-12 sm:py-16 md:py-24 bg-[#F4F5F7] scroll-mt-20">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 sm:gap-6 mb-8 sm:mb-12">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3 tracking-tight">Workspace Types</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 tracking-tight">Workspace Types</h2>
               <p className="text-lg text-muted-foreground max-w-xl leading-relaxed">
                 Tailored environments for every stage of your business.
               </p>
@@ -127,7 +127,7 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {[
               {
                 title: "Private Office",
@@ -186,14 +186,14 @@ export default function HomePage() {
       </section>
 
 
-      <section className="py-24">
+      <section className="py-12 sm:py-16 md:py-24">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 tracking-tight">Popular Workspaces</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Top-rated spaces in Lagos and across Nigeria</p>
+          <div className="text-center mb-10 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 sm:mb-4 tracking-tight">Popular Workspaces</h2>
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-2">Top-rated spaces in Lagos and across Nigeria</p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             {[
               { i: 3, name: "Villa Lagos Coworking", area: "Victoria Island" },
               { i: 4, name: "Co-Creation Hub", area: "Yaba" },
@@ -227,11 +227,11 @@ export default function HomePage() {
                     </Badge>
                   </div>
                 </div>
-                <CardContent className="p-6">
-                  <h3 className="font-semibold text-lg mb-2">{name}</h3>
+                <CardContent className="p-4 sm:p-6">
+                  <h3 className="font-semibold text-base sm:text-lg mb-2 line-clamp-1">{name}</h3>
                   <p className="text-muted-foreground text-sm mb-3">{area}, Lagos</p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                    <div className="flex items-center flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
                       <span className="flex items-center">
                         <Users className="w-4 h-4 mr-1" />
                         {4 + i} people

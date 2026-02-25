@@ -53,10 +53,10 @@ const savedSpaces = [
 
 export default function SavedSpacesPage() {
   return (
-    <div className="min-h-screen bg-[#F4F5F7]">
+    <div className="min-h-screen w-full overflow-x-hidden bg-[#F4F5F7]">
       <Navbar />
 
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
         {/* Breadcrumbs */}
         <nav className="text-sm text-muted-foreground mb-4" aria-label="Breadcrumb">
           <Link href="/dashboard" className="hover:text-foreground transition-colors">
@@ -69,7 +69,7 @@ export default function SavedSpacesPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground tracking-tight">
               Saved Spaces
             </h1>
             <p className="text-muted-foreground mt-1.5 text-base md:text-lg">
@@ -88,7 +88,7 @@ export default function SavedSpacesPage() {
         </div>
 
         {/* Card grid - same card style as Find Spaces (shadow-soft, primary accents) */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 mb-12 sm:mb-16">
           {savedSpaces.map((space, idx) => (
             <motion.div
               key={space.id}

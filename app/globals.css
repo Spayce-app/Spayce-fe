@@ -139,9 +139,12 @@
   }
   body {
     @apply bg-background text-foreground text-sm antialiased;
+    overflow-x: hidden;
+    min-height: 100dvh;
   }
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
 }
 

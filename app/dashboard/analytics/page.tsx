@@ -111,8 +111,8 @@ export default function AnalyticsPage() {
         searchPlaceholder="Search analytics..."
         showHelpIcon={true}
       />
-      <main className="flex-1 overflow-y-auto bg-[#F4F5F7]">
-        <div className="p-8 md:p-10 max-w-[1440px] mx-auto space-y-10">
+      <main className="flex-1 min-h-0 overflow-y-auto bg-[#F4F5F7]">
+        <div className="p-4 sm:p-6 md:p-8 lg:p-10 max-w-[1440px] mx-auto space-y-8 md:space-y-10">
           <section className="space-y-8">
             <div className="hidden">
               <h2 className="text-xl font-bold text-foreground">

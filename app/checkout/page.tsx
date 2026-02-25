@@ -130,10 +130,10 @@ function CheckoutContent() {
   const editHref = `/spaces/${booking.spaceId}?checkIn=${booking.checkIn}&checkOut=${booking.checkOut}`
 
   return (
-    <div className="min-h-screen bg-[#F4F5F7]">
+    <div className="min-h-screen w-full overflow-x-hidden bg-[#F4F5F7]">
       <Navbar />
 
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
         {/* Breadcrumbs */}
         <nav className="text-sm text-muted-foreground mb-6" aria-label="Breadcrumb">
           <ol className="flex flex-wrap items-center gap-1">
