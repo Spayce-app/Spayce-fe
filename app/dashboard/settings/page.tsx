@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { toast } from "sonner"
 import DashboardHeader from "@/components/DashboardHeader"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -110,7 +111,7 @@ export default function SettingsPage() {
                           className="border-gray-200 resize-y min-h-[100px]"
                         />
                       </div>
-                      <Button className="mt-4 bg-primary hover:bg-primary/90 text-primary-foreground text-sm">
+                      <Button className="mt-4 bg-primary hover:bg-primary/90 text-primary-foreground text-sm" onClick={() => toast.success("Profile updated successfully")}>
                         Save Changes
                       </Button>
                     </CardContent>
@@ -139,6 +140,7 @@ export default function SettingsPage() {
                             </p>
                             <button
                               type="button"
+                              onClick={() => toast.info("Payout method update coming soon")}
                               className="text-sm font-medium text-primary mt-2 hover:underline"
                             >
                               Change payout method
@@ -202,6 +204,7 @@ export default function SettingsPage() {
                             </p>
                             <button
                               type="button"
+                              onClick={() => toast.info("Payout method update coming soon")}
                               className="text-sm font-medium text-primary mt-2 hover:underline"
                             >
                               Change payout method
@@ -285,7 +288,7 @@ export default function SettingsPage() {
                         </span>
                       </li>
                     </ul>
-                    <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+                    <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" onClick={() => toast.info("ID verification flow coming soon")}>
                       Complete ID Verification
                     </Button>
                   </CardContent>

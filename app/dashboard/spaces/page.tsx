@@ -1,11 +1,11 @@
 "use client"
 
+import Link from "next/link"
 import DashboardHeader from "@/components/DashboardHeader"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Plus, MapPin } from "lucide-react"
-import Link from "next/link"
 import Image from "next/image"
 
 const listings = [
@@ -88,12 +88,16 @@ export default function SpacesPage() {
                     <span>{listing.earned}</span>
                   </div>
                   <div className="mt-4 pt-4 border-t border-gray-100 flex gap-2">
-                    <Button variant="outline" size="sm" className="flex-1">
-                      Edit
-                    </Button>
-                    <Button variant="outline" size="sm" className="flex-1">
-                      View
-                    </Button>
+                    <Link href={`/list-space?edit=${listing.id}`} className="flex-1">
+                      <Button variant="outline" size="sm" className="w-full">
+                        Edit
+                      </Button>
+                    </Link>
+                    <Link href={`/spaces/${listing.id}`} className="flex-1">
+                      <Button variant="outline" size="sm" className="w-full">
+                        View
+                      </Button>
+                    </Link>
                   </div>
                 </CardContent>
               </Card>

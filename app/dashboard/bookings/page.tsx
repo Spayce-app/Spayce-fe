@@ -1,6 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
+import Link from "next/link"
+import { toast } from "sonner"
 import DashboardHeader from "@/components/DashboardHeader"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -18,6 +20,7 @@ import {
   Star,
   ChevronLeft,
   ChevronRight,
+  Eye,
 } from "lucide-react"
 import {
   Select,
@@ -27,6 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
+const ITEMS_PER_PAGE = 4
 const statusTabs = [
   { value: "all", label: "All Bookings" },
   { value: "confirmed", label: "Confirmed" },
@@ -35,46 +39,52 @@ const statusTabs = [
   { value: "cancelled", label: "Cancelled" },
 ] as const
 
-const bookings = [
+type BookingStatus = "Confirmed" | "Pending" | "Completed" | "Cancelled"
+
+const bookingsData = [
   {
+    id: "1",
     renterName: "Adewale Coker",
     renterInitials: "AC",
     spaceName: "Executive Boardroom",
     dateTime: "Oct 24, 2023 10:00 AM",
     duration: "4 Hours",
     amount: "N45,000",
-    status: "Confirmed" as const,
+    status: "Confirmed" as BookingStatus,
   },
   {
+    id: "2",
     renterName: "Chinelo Okoro",
     renterInitials: "CO",
     spaceName: "Creative Studio",
     dateTime: "Oct 25, 2023 02:00 PM",
     duration: "2 Hours",
     amount: "N20,000",
-    status: "Pending" as const,
+    status: "Pending" as BookingStatus,
   },
   {
+    id: "3",
     renterName: "Tunde Bakare",
     renterInitials: "TB",
     spaceName: "Private Office",
     dateTime: "Oct 22, 2023 09:00 AM",
     duration: "8 Hours",
     amount: "N60,000",
-    status: "Completed" as const,
+    status: "Completed" as BookingStatus,
   },
   {
+    id: "4",
     renterName: "Sarah J.",
     renterInitials: "SJ",
     spaceName: "Rooftop Lounge",
     dateTime: "Oct 20, 2023 06:00 PM",
     duration: "5 Hours",
     amount: "N120,000",
-    status: "Cancelled" as const,
+    status: "Cancelled" as BookingStatus,
   },
 ]
 
-function StatusBadge({ status }: { status: (typeof bookings)[0]["status"] }) {
+function StatusBadge({ status }: { status: BookingStatus }) {
   const config = {
     Confirmed: { dot: "bg-green-500", pill: "bg-green-50 text-green-700" },
     Pending: { dot: "bg-orange-400", pill: "bg-orange-50 text-orange-700" },
@@ -90,8 +100,42 @@ function StatusBadge({ status }: { status: (typeof bookings)[0]["status"] }) {
 }
 
 export default function BookingsPage() {
-  const [activeTab, setActiveTab] = useState("all")
+  const [activeTab, setActiveTab] = useState<string>("all")
+  const [searchQuery, setSearchQuery] = useState("")
+  const [selectedMonth, setSelectedMonth] = useState("oct2023")
+  const [currentPage, setCurrentPage] = useState(1)
   const revenueProgress = (842500 / 1200000) * 100
+
+  const filteredBookings = useMemo(() => {
+    let list = bookingsData
+    if (activeTab !== "all") {
+      const status = activeTab.charAt(0).toUpperCase() + activeTab.slice(1) as BookingStatus
+      list = list.filter((b) => b.status === status)
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase()
+      list = list.filter(
+        (b) =>
+          b.renterName.toLowerCase().includes(q) ||
+          b.spaceName.toLowerCase().includes(q)
+      )
+    }
+    return list
+  }, [activeTab, searchQuery])
+
+  const totalPages = Math.max(1, Math.ceil(filteredBookings.length / ITEMS_PER_PAGE))
+  const start = (currentPage - 1) * ITEMS_PER_PAGE
+  const paginatedBookings = filteredBookings.slice(start, start + ITEMS_PER_PAGE)
+  const startItem = filteredBookings.length === 0 ? 0 : start + 1
+  const endItem = Math.min(start + ITEMS_PER_PAGE, filteredBookings.length)
+
+  const handleExportPdf = () => {
+    toast.success("Export started. Your PDF will download shortly.")
+  }
+
+  const handleFilterClick = () => {
+    toast.info("Filters applied from search and date selection.")
+  }
 
   return (
     <>
@@ -101,14 +145,16 @@ export default function BookingsPage() {
         showSearch={false}
         customActions={
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
-            <Button variant="outline" size="sm" className="rounded-xl border-gray-200/80 shadow-sm hover:shadow-md transition-shadow sm:size-default">
+            <Button variant="outline" size="sm" className="rounded-xl border-gray-200/80 shadow-sm hover:shadow-md transition-shadow sm:size-default" onClick={handleExportPdf}>
               <Download className="h-4 w-4 mr-2" />
               Export PDF
             </Button>
-            <Button size="sm" className="rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-md shadow-primary/20 sm:size-default">
-              <Plus className="h-4 w-4 mr-2" />
-              New Manual Booking
-            </Button>
+            <Link href="/list-space">
+              <Button size="sm" className="rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-md shadow-primary/20 sm:size-default w-full sm:w-auto">
+                <Plus className="h-4 w-4 mr-2" />
+                New Manual Booking
+              </Button>
+            </Link>
           </div>
         }
       />
@@ -179,7 +225,7 @@ export default function BookingsPage() {
               <div className="flex flex-col lg:flex-row lg:items-center gap-4">
                 <Tabs
                   value={activeTab}
-                  onValueChange={setActiveTab}
+                  onValueChange={(v) => { setActiveTab(v); setCurrentPage(1) }}
                   className="flex-1"
                 >
                   <TabsList className="bg-gray-100/80 p-1.5 rounded-xl h-auto flex-wrap gap-1">
@@ -200,10 +246,15 @@ export default function BookingsPage() {
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       placeholder="Search renter or space"
+                      value={searchQuery}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value)
+                        setCurrentPage(1)
+                      }}
                       className="pl-9 h-10 rounded-xl border-gray-200/80 shadow-sm focus:shadow-md transition-shadow"
                     />
                   </div>
-                  <Select defaultValue="oct2023">
+                  <Select value={selectedMonth} onValueChange={(v) => { setSelectedMonth(v); setCurrentPage(1) }}>
                     <SelectTrigger className="w-[130px] h-10 rounded-xl border-gray-200/80 shadow-sm">
                       <Calendar className="h-4 w-4 text-gray-500 mr-2" />
                       <SelectValue />
@@ -214,7 +265,7 @@ export default function BookingsPage() {
                       <SelectItem value="aug2023">Aug 2023</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Button variant="outline" size="icon" className="h-10 w-10 rounded-xl border-gray-200/80 shadow-sm hover:shadow-md transition-shadow">
+                  <Button variant="outline" size="icon" className="h-10 w-10 rounded-xl border-gray-200/80 shadow-sm hover:shadow-md transition-shadow" onClick={handleFilterClick}>
                     <Filter className="h-4 w-4 text-gray-600" />
                   </Button>
                 </div>
@@ -224,9 +275,15 @@ export default function BookingsPage() {
 
           {/* Bookings - Mobile cards */}
           <div className="md:hidden space-y-3">
-            {bookings.map((booking) => (
+            {paginatedBookings.length === 0 ? (
+              <Card className="bg-white rounded-2xl">
+                <CardContent className="p-8 text-center text-muted-foreground">
+                  No bookings match your filters.
+                </CardContent>
+              </Card>
+            ) : paginatedBookings.map((booking) => (
               <Card
-                key={booking.renterName + booking.spaceName}
+                key={booking.id}
                 className="bg-white border-0 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.08),0_4px_16px_-4px_rgba(0,0,0,0.06)] rounded-2xl overflow-hidden"
               >
                 <CardContent className="p-4">
@@ -257,14 +314,18 @@ export default function BookingsPage() {
                     <span className="text-right font-semibold text-foreground">{booking.amount}</span>
                   </div>
                   <div className="mt-3 flex gap-2">
-                    <Button variant="outline" size="sm" className="flex-1 rounded-xl">
-                      View
-                    </Button>
+                    <Link href={`/dashboard/bookings/${booking.id}`} className="flex-1">
+                      <Button variant="outline" size="sm" className="w-full rounded-xl">
+                        <Eye className="h-4 w-4 mr-1.5" />
+                        View
+                      </Button>
+                    </Link>
                     <Button
                       variant="ghost"
                       size="icon"
                       className="h-9 w-9 rounded-xl shrink-0"
                       aria-label="More actions"
+                      onClick={() => toast.info("More options coming soon")}
                     >
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
@@ -274,20 +335,19 @@ export default function BookingsPage() {
             ))}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 pb-2">
               <p className="text-sm text-muted-foreground order-2 sm:order-1">
-                Showing 1-4 of 24 results
+                Showing {startItem}-{endItem} of {filteredBookings.length}
               </p>
               <div className="flex items-center gap-2 order-1 sm:order-2">
-                <Button variant="outline" size="sm" className="rounded-xl" disabled>
+                <Button variant="outline" size="sm" className="rounded-xl" disabled={currentPage <= 1} onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}>
                   <ChevronLeft className="h-4 w-4 mr-1" />
                   Prev
                 </Button>
-                <Button variant="default" size="sm" className="rounded-xl h-9 w-9 p-0">
-                  1
-                </Button>
-                <Button variant="outline" size="sm" className="h-9 w-9 p-0 rounded-xl">
-                  2
-                </Button>
-                <Button variant="outline" size="sm" className="rounded-xl">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                  <Button key={p} variant={currentPage === p ? "default" : "outline"} size="sm" className="rounded-xl h-9 w-9 p-0" onClick={() => setCurrentPage(p)}>
+                    {p}
+                  </Button>
+                ))}
+                <Button variant="outline" size="sm" className="rounded-xl" disabled={currentPage >= totalPages} onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}>
                   Next
                   <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>
@@ -326,9 +386,15 @@ export default function BookingsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {bookings.map((booking) => (
+                  {paginatedBookings.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="py-12 text-center text-muted-foreground">
+                        No bookings match your filters.
+                      </td>
+                    </tr>
+                  ) : paginatedBookings.map((booking) => (
                     <tr
-                      key={booking.renterName + booking.spaceName}
+                      key={booking.id}
                       className="border-b border-gray-100/80 last:border-0 hover:bg-primary/[0.02] transition-colors group"
                     >
                       <td className="py-4 px-6">
@@ -359,14 +425,26 @@ export default function BookingsPage() {
                         <StatusBadge status={booking.status} />
                       </td>
                       <td className="py-4 px-6 text-right pr-6">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-9 w-9 rounded-xl text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
-                          aria-label="More actions"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
+                        <div className="flex items-center justify-end gap-1">
+                          <Link href={`/dashboard/bookings/${booking.id}`}>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-9 rounded-xl text-muted-foreground hover:text-foreground"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </Link>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-9 w-9 rounded-xl text-muted-foreground hover:text-foreground hover:bg-primary/5"
+                            aria-label="More actions"
+                            onClick={() => toast.info("View booking details for more options")}
+                          >
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -375,32 +453,37 @@ export default function BookingsPage() {
             </div>
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-6 py-4 border-t border-gray-100/80 bg-gray-50/40 rounded-b-2xl">
               <p className="text-sm text-muted-foreground">
-                Showing 1-4 of 24 results
+                Showing {startItem}-{endItem} of {filteredBookings.length}
               </p>
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
                   size="sm"
                   className="rounded-xl border-gray-200/80 shadow-sm"
-                  disabled
+                  disabled={currentPage <= 1}
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 >
                   <ChevronLeft className="h-4 w-4 mr-1" />
                   Previous
                 </Button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                  <Button
+                    key={p}
+                    variant={currentPage === p ? "default" : "outline"}
+                    size="sm"
+                    className={`rounded-xl h-9 w-9 p-0 ${currentPage === p ? "shadow-md shadow-primary/20" : "border-gray-200/80 shadow-sm"}`}
+                    onClick={() => setCurrentPage(p)}
+                  >
+                    {p}
+                  </Button>
+                ))}
                 <Button
-                  variant="default"
+                  variant="outline"
                   size="sm"
-                  className="rounded-xl bg-primary text-primary-foreground h-9 w-9 p-0 shadow-md shadow-primary/20"
+                  className="rounded-xl border-gray-200/80 shadow-sm"
+                  disabled={currentPage >= totalPages}
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 >
-                  1
-                </Button>
-                <Button variant="outline" size="sm" className="h-9 w-9 p-0 rounded-xl border-gray-200/80 shadow-sm">
-                  2
-                </Button>
-                <Button variant="outline" size="sm" className="h-9 w-9 p-0 rounded-xl border-gray-200/80 shadow-sm">
-                  3
-                </Button>
-                <Button variant="outline" size="sm" className="rounded-xl border-gray-200/80 shadow-sm">
                   Next
                   <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>

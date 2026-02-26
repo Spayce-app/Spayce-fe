@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
+import { toast } from "sonner"
 import DashboardHeader from "@/components/DashboardHeader"
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -67,7 +68,6 @@ export default function ReviewsPage() {
   const [replyingTo, setReplyingTo] = useState<number | null>(null)
   const [replyText, setReplyText] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
-  const totalPages = 12
 
   const handleReply = (reviewId: number) => {
     setReplyingTo(reviewId)
@@ -82,6 +82,22 @@ export default function ReviewsPage() {
   }
 
   const maxPercent = Math.max(...ratingDistribution.map((r) => r.percent))
+
+  const filteredReviews = useMemo(() => {
+    if (activeTab === "all") return reviews
+    if (activeTab === "pending") return reviews.filter((r) => !r.hasReply)
+    if (activeTab === "high") return reviews.filter((r) => r.rating >= 4)
+    if (activeTab === "low") return reviews.filter((r) => r.rating <= 2)
+    return reviews
+  }, [activeTab])
+
+  const ITEMS_PER_PAGE = 3
+  const totalPages = Math.max(1, Math.ceil(filteredReviews.length / ITEMS_PER_PAGE))
+  const start = (currentPage - 1) * ITEMS_PER_PAGE
+  const paginatedReviews = filteredReviews.slice(start, start + ITEMS_PER_PAGE)
+
+  const handleEditReply = () => toast.info("Edit reply — coming soon")
+  const handleDeleteReply = () => toast.info("Delete reply — coming soon")
 
   return (
     <>
@@ -155,7 +171,7 @@ export default function ReviewsPage() {
                 <button
                   key={tab.value}
                   type="button"
-                  onClick={() => setActiveTab(tab.value)}
+                  onClick={() => { setActiveTab(tab.value); setCurrentPage(1) }}
                   className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors -mb-px ${
                     activeTab === tab.value
                       ? "border-primary text-primary"
@@ -170,7 +186,7 @@ export default function ReviewsPage() {
 
           {/* Review List */}
           <div className="space-y-5">
-            {reviews.map((review) => (
+            {paginatedReviews.map((review) => (
               <Card
                 key={review.id}
                 className="bg-white border-gray-100 shadow-sm rounded-lg overflow-hidden"
@@ -221,12 +237,14 @@ export default function ReviewsPage() {
                           <div className="flex gap-4 mt-2">
                             <button
                               type="button"
+                              onClick={handleEditReply}
                               className="text-xs font-medium text-primary hover:underline"
                             >
                               Edit
                             </button>
                             <button
                               type="button"
+                              onClick={handleDeleteReply}
                               className="text-xs font-medium text-red-600 hover:underline"
                             >
                               Delete
@@ -291,36 +309,30 @@ export default function ReviewsPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
+                disabled={currentPage <= 1}
                 className="h-9"
               >
                 <ChevronLeft className="h-4 w-4 mr-1" />
                 Previous
               </Button>
-              <div className="flex items-center gap-1 mx-1">
-                <Button
-                  variant="default"
-                  size="sm"
-                  className="h-9 w-9 p-0 bg-primary text-primary-foreground"
-                >
-                  1
-                </Button>
-                <Button variant="outline" size="sm" className="h-9 w-9 p-0">
-                  2
-                </Button>
-                <Button variant="outline" size="sm" className="h-9 w-9 p-0">
-                  3
-                </Button>
-                <span className="px-2 text-gray-400">...</span>
-                <Button variant="outline" size="sm" className="h-9 w-9 p-0">
-                  {totalPages}
-                </Button>
+              <div className="flex items-center gap-1 mx-1 flex-wrap justify-center">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                  <Button
+                    key={p}
+                    variant={currentPage === p ? "default" : "outline"}
+                    size="sm"
+                    className="h-9 w-9 p-0"
+                    onClick={() => setCurrentPage(p)}
+                  >
+                    {p}
+                  </Button>
+                ))}
               </div>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
+                disabled={currentPage >= totalPages}
                 className="h-9"
               >
                 Next
