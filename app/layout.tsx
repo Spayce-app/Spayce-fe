@@ -16,6 +16,7 @@ const outfit = localFont({
   preload: true,
 })
 import { Suspense } from "react"
+import Image from "next/image"
 import { Toaster } from "sonner"
 import "./globals.css"
 import { Providers } from "./providers"
@@ -71,7 +72,7 @@ export default function RootLayout({
           <Suspense fallback={
             <div className="flex items-center justify-center h-screen w-screen bg-background">
               <div className="flex flex-col items-center gap-4">
-                <img src="/spaycelogo.png" alt="Spayce" className="h-24 w-24 animate-pulse" />
+                <Image src="/spaycelogo.png" alt="Spayce" width={96} height={96} className="h-24 w-24 animate-pulse" />
                 <span className="text-lg font-semibold text-primary">Spayce</span>
               </div>
             </div>

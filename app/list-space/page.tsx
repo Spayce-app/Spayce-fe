@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -10,7 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separators"
-import { Upload, Building, User, Camera, FileText, Shield, CheckCircle, ChevronLeft, ChevronRight, X, Mail, Phone, Briefcase, MapPin, Plus, Check } from "lucide-react"
+import { Upload, User, Camera, FileText, CheckCircle, ChevronLeft, ChevronRight, X, Mail, Phone, Briefcase, MapPin, Plus, Check } from "lucide-react"
 import Link from "next/link"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
@@ -31,23 +32,6 @@ const GOVERNMENT_ID_OPTIONS = [
   { value: "national-id", label: "National ID" },
   { value: "voters-card", label: "Voter's Card" },
   { value: "drivers-license", label: "Driver's License" },
-]
-
-const AMENITIES = [
-  "Wi-Fi",
-  "AC",
-  "Projector/TV",
-  "Whiteboard",
-  "Parking",
-  "Kitchen",
-  "Security",
-  "Generator/Inverter",
-  "Printing",
-  "Phone Booths",
-  "Reception",
-  "24/7 Access",
-  "Coffee/Tea",
-  "Meeting Rooms",
 ]
 
 const AMENITIES_GROUPED: { category: string; items: { id: string; label: string; description: string }[] }[] = [
@@ -96,8 +80,6 @@ const SPACE_TYPES = [
   "Desk/Co-working",
   "Conference/Meeting Room",
 ]
-
-const PRICING_MODELS = ["Hourly", "Daily", "Weekly", "Monthly"]
 
 const AVAILABILITY_OPTIONS = ["Weekdays", "Weekends", "24/7", "Specific Days"]
 
@@ -303,7 +285,7 @@ export default function ListSpacePage() {
     onSuccess() {
       toast.success("Space listed successfully!")
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || "Failed to list space. Please try again.")
     },
   })
@@ -570,10 +552,12 @@ export default function ListSpacePage() {
                       <div className="mt-4 flex flex-wrap gap-2 justify-center">
                         {photoPreviews.map((url, index) => (
                           <div key={url} className="relative w-20 h-20 rounded-lg overflow-hidden border border-border bg-muted shrink-0">
-                            <img
+                            <Image
                               src={url}
                               alt={`Photo ${index + 1}`}
-                              className="w-full h-full object-cover"
+                              fill
+                              className="object-cover"
+                              unoptimized
                             />
                             <button
                               type="button"

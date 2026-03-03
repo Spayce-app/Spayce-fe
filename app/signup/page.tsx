@@ -44,7 +44,7 @@ export default function Page() {
         router.push('/find-spaces')
       }
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || "Failed to send OTP");
     },
   });
@@ -85,7 +85,7 @@ export default function Page() {
             <span className="text-primary">Create</span> An Account
           </h1>
           <p className="text-gray-600 text-base max-w-2xl mt-1">
-            Register now to start listing or booking workspaces. We'll send you a verification code.
+            Register now to start listing or booking workspaces. We&apos;ll send you a verification code.
           </p>
         </motion.div>
 

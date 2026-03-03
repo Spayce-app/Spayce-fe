@@ -64,7 +64,7 @@ export async function getSpaceById(id: string) {
   return res.json();
 }
 
-export async function listSpaces(data: FormData | Record<string, any>) {
+export async function listSpaces(data: FormData | Record<string, unknown>) {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('No token found');
 

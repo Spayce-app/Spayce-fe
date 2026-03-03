@@ -16,7 +16,6 @@ export default function VerifyOTPPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const email = searchParams.get("email") || ""
-  const type = searchParams.get("type") || "signup"
   const [otp, setOtp] = useState("")
   const [countdown, setCountdown] = useState(60)
   const [canResend, setCanResend] = useState(false)
@@ -48,7 +47,7 @@ export default function VerifyOTPPage() {
       }
       router.push("/dashboard")
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || "Invalid OTP. Please try again.")
       setOtp("")
     },
@@ -62,7 +61,7 @@ export default function VerifyOTPPage() {
       setCanResend(false)
       setOtp("")
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || "Failed to resend OTP")
     },
   })
@@ -124,7 +123,7 @@ export default function VerifyOTPPage() {
             Check Your Email
           </h1>
           <p className="text-muted-foreground mb-2">
-            We've sent a 6-digit verification code to
+            We&apos;ve sent a 6-digit verification code to
           </p>
           <p className="font-semibold text-foreground">{email}</p>
         </motion.div>
@@ -163,7 +162,7 @@ export default function VerifyOTPPage() {
 
           <div className="text-center space-y-2">
             <p className="text-sm text-muted-foreground">
-              Didn't receive the code?
+              Didn&apos;t receive the code?
             </p>
             {canResend ? (
               <Button

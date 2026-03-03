@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Clock, CheckCircle2 } from "lucide-react"
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, startOfWeek, endOfWeek } from "date-fns"
 
@@ -19,7 +18,7 @@ interface BookingCalendarProps {
   price: number
   priceUnit: string
   instantBooking?: boolean
-  onBookingComplete?: (booking: { date: Date; time: string }) => void
+  onBookingComplete?: (booking: { date: Date; time: string; spaceId?: string }) => void
   existingBookings?: BookingSlot[]
   availableHours?: string[]
 }
@@ -27,7 +26,7 @@ interface BookingCalendarProps {
 export function BookingCalendar({
   spaceId,
   price,
-  priceUnit,
+  priceUnit = "day",
   instantBooking = true,
   onBookingComplete,
   existingBookings = [],
@@ -76,7 +75,7 @@ export function BookingCalendar({
     setIsBooking(true)
     try {
       if (onBookingComplete) {
-        await onBookingComplete({ date: selectedDate, time: selectedTime })
+        await onBookingComplete({ date: selectedDate, time: selectedTime, spaceId })
       }
       
       // Reset selection after successful booking
@@ -241,7 +240,7 @@ export function BookingCalendar({
               </div>
               <div className="flex items-center justify-between pt-3 border-t border-border/50">
                 <span className="text-sm text-muted-foreground font-medium">Total Price</span>
-                <span className="text-2xl font-bold text-primary">₦{price.toLocaleString()}</span>
+                <span className="text-2xl font-bold text-primary">₦{price.toLocaleString()}/{priceUnit}</span>
               </div>
             </div>
 

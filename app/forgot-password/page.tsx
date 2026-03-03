@@ -23,7 +23,7 @@ export default function ForgotPasswordPage() {
       sessionStorage.setItem("resetEmail", email)
       router.push(`/verify-reset-otp?email=${encodeURIComponent(email)}`)
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || "Failed to send reset code")
     },
   })
@@ -68,7 +68,7 @@ export default function ForgotPasswordPage() {
             Forgot Password?
           </h1>
           <p className="text-muted-foreground">
-            Don't worry! Enter your email address and we'll send you a code to reset your password.
+            Don&apos;t worry! Enter your email address and we&apos;ll send you a code to reset your password.
           </p>
         </motion.div>
 

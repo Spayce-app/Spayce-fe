@@ -49,7 +49,7 @@ export default function ResetPasswordPage() {
       sessionStorage.removeItem("resetOTP")
       router.push("/signin")
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || "Failed to reset password")
     },
   })

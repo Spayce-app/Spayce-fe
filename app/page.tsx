@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, MapPin, Users, Wifi, Car, Shield, Calendar, Star, ChevronDown } from "lucide-react"
+import { Search, MapPin, Users, Car, Calendar, Star } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
@@ -18,9 +18,9 @@ export default function HomePage() {
   useEffect(() => {
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % rotatingWords.length);
-    }, 2500); 
+    }, 2500);
     return () => clearInterval(interval);
-  }, []);
+  }, [rotatingWords.length]);
 
   const router = useRouter()
   return (

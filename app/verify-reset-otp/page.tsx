@@ -46,7 +46,7 @@ export default function VerifyResetOTPPage() {
       sessionStorage.setItem("resetOTP", otp)
       router.push(`/reset-password?email=${encodeURIComponent(email)}`)
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || "Invalid OTP. Please try again.")
       setOtp("")
     },
@@ -60,7 +60,7 @@ export default function VerifyResetOTPPage() {
       setCanResend(false)
       setOtp("")
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || "Failed to resend code")
     },
   })
@@ -147,7 +147,7 @@ export default function VerifyResetOTPPage() {
 
           <div className="text-center space-y-2">
             <p className="text-sm text-muted-foreground">
-              Didn't receive the code?
+              Didn&apos;t receive the code?
             </p>
             {canResend ? (
               <Button
