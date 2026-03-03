@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { use, useState } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -167,14 +167,15 @@ const allListings = [
 export default function HostProfilePage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
+  const { id } = use(params)
   const [showAllListings, setShowAllListings] = useState(false)
-  const host = HOST_DATA[params.id] || HOST_DATA["1"]
+  const host = HOST_DATA[id] || HOST_DATA["1"]
   const listings = showAllListings
-    ? allListings.filter((l) => l.hostId === params.id)
-    : HOST_LISTINGS.filter((l) => l.hostId === params.id)
-  const totalListings = allListings.filter((l) => l.hostId === params.id).length
+    ? allListings.filter((l) => l.hostId === id)
+    : HOST_LISTINGS.filter((l) => l.hostId === id)
+  const totalListings = allListings.filter((l) => l.hostId === id).length
   const displayedCount = listings.length
 
   return (

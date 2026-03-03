@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { use, useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { BookingCalendar } from "@/components/ui/booking-calendar"
@@ -167,8 +167,9 @@ The space features ergonomic Herman Miller chairs, sound-proof phone booths for 
 export default function SpaceDetailPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
+  const { id } = use(params)
   const router = useRouter()
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [showAllAmenities, setShowAllAmenities] = useState(false)
@@ -240,7 +241,7 @@ export default function SpaceDetailPage({
       return
     }
     messageMutation.mutate({
-      spaceId: params.id,
+      spaceId: id,
       message: contactMessage,
     })
   }
@@ -258,7 +259,7 @@ export default function SpaceDetailPage({
       }
 
       createBooking({
-        spaceId: params.id,
+        spaceId: id,
         date: booking.date.toISOString(),
         time: booking.time,
         duration: 1,
@@ -316,7 +317,7 @@ export default function SpaceDetailPage({
 
   const handleBookNow = () => {
     const checkoutData = {
-      spaceId: params.id,
+      spaceId: id,
       hostId: spaceData.host.id,
       spaceName: spaceData.name,
       spaceImage: spaceData.images[0] || "/heroimg.jpg",
@@ -816,7 +817,7 @@ export default function SpaceDetailPage({
               </div>
               <div className="overflow-y-auto flex-1 p-6">
                 <BookingCalendar
-                  spaceId={params.id}
+                  spaceId={id}
                   price={spaceData.price}
                   priceUnit={spaceData.priceUnit}
                   instantBooking
